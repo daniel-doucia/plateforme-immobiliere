@@ -2,48 +2,53 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Role;
+use App\Enums\TypeBailleur;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\BailleurProfil;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws ValidationException
-     */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $data = $request->validated();
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = DB::transaction(function () use ($data) {
+            $user = new User();
+            $user->forceFill([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'telephone' => $data['telephone'],
+                'password' => Hash::make($data['password']),
+            ])->save();
 
-        $user->assignRole(\App\Enums\Role::Client->value);
+            $role = Role::from($data['type_compte']);
+            $user->assignRole($role->value);
+
+            if ($role === Role::Bailleur) {
+                BailleurProfil::create([
+                    'user_id' => $user->id,
+                    'type' => TypeBailleur::Particulier,
+                ]);
+            }
+
+            return $user;
+        });
+
         event(new Registered($user));
 
         Auth::login($user);

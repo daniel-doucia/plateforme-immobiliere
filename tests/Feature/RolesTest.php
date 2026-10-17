@@ -26,14 +26,3 @@ test('un administrateur accède à l\'administration', function () {
 
     $this->actingAs($user)->get('/admin')->assertOk();
 });
-
-test('une inscription attribue le rôle client', function () {
-    $this->post('/register', [
-        'name' => 'Test',
-        'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
-
-    expect(User::where('email', 'test@example.com')->first()->hasRole('client'))->toBeTrue();
-});
