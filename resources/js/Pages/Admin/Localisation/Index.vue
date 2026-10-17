@@ -17,7 +17,7 @@ const ajouterVille = () =>
 
 const supprimerVille = (ville) => {
     if (confirm(`Supprimer la ville « ${ville.nom} » ?`)) {
-        router.delete(route('admin.villes.destroy', ville.id), { preserveScroll: true });
+        router.delete(route('admin.villes.destroy', ville.id), { preserveScroll: true, onError: (e) => alert(e.ville) });
     }
 };
 
