@@ -1,0 +1,1 @@
+// Initialisation JavaScript globale
