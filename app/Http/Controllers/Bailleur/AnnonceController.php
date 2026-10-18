@@ -66,7 +66,7 @@ class AnnonceController extends Controller
     public function soumettre(Annonce $annonce): RedirectResponse
     {
         Gate::authorize('soumettre', $annonce);
-        $annonce->transitionner(StatutAnnonce::EnAttentePaiement);
+        app(\App\Services\Annonces\SoumettreAnnonce::class)->executer($annonce);
 
         return back();
     }

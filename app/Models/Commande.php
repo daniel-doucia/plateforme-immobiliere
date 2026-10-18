@@ -10,8 +10,8 @@ use Illuminate\Support\Str;
 class Commande extends Model
 {
     /**
-     * Le statut et la référence n'y figurent pas : ils sont gérés par le code métier
-     * (et plus tard par la confirmation du fournisseur de paiement).
+     * Le statut, la référence et la consommation n'y figurent pas : ils sont gérés
+     * par le code métier (confirmation du paiement, validation par la modération).
      */
     protected $fillable = ['user_id', 'annonce_id', 'forfait_id', 'libelle', 'duree_jours', 'montant'];
 
@@ -22,6 +22,7 @@ class Commande extends Model
             'montant' => 'integer',
             'duree_jours' => 'integer',
             'payee_le' => 'datetime',
+            'consommee_le' => 'datetime',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LocalisationController;
+use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\VerificationBailleurController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::post('/villes/{ville}/quartiers', [LocalisationController::class, 'storeQuartier'])->name('quartiers.store');
         Route::patch('/quartiers/{quartier}', [LocalisationController::class, 'updateQuartier'])->name('quartiers.update');
         Route::delete('/quartiers/{quartier}', [LocalisationController::class, 'destroyQuartier'])->name('quartiers.destroy');
+    });
+
+Route::middleware(['auth', 'verified', 'permission:annonces.moderer'])
+    ->prefix('admin/moderation')
+    ->name('admin.moderation.')
+    ->group(function () {
+        Route::get('/', [ModerationController::class, 'index'])->name('index');
+        Route::post('/{annonce}/valider', [ModerationController::class, 'valider'])->name('valider');
+        Route::post('/{annonce}/rejeter', [ModerationController::class, 'rejeter'])->name('rejeter');
     });

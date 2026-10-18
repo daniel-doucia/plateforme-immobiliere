@@ -29,6 +29,7 @@ const menu = computed(() => {
         );
     }
 
+    if (Object.values(page.props.auth.permissions ?? []).includes('annonces.moderer')) liens.push({ nom: 'Modération', route: 'admin.moderation.index', actif: 'admin.moderation.*' });
     return liens;
 });
 </script>

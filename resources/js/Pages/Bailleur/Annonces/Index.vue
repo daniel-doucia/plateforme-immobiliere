@@ -71,7 +71,7 @@ const supprimer = (id) => {
                     </div>
 
                     <p v-if="a.statut === 'rejetee' && a.motif_rejet" class="text-sm text-red-700">
-                        Motif du rejet : {{ a.motif_rejet }}
+                        Motif du rejet : {{ a.motif_rejet }}. Correction gratuite : votre paiement est conservé, corrigez puis soumettez à nouveau.
                     </p>
                     <p v-if="a.statut === 'en_attente_paiement'" class="text-sm text-yellow-800">
                         <Link :href="route('bailleur.commandes.create', a.id)" class="font-semibold underline">Choisir un forfait et payer</Link>
