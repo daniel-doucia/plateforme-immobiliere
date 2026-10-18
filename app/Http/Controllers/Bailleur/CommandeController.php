@@ -74,6 +74,7 @@ class CommandeController extends Controller
 
         return Inertia::render('Bailleur/Commandes/Show', [
             'commande' => [
+                'id' => $commande->id,
                 'reference' => $commande->reference,
                 'libelle' => $commande->libelle,
                 'duree_jours' => $commande->duree_jours,
@@ -81,6 +82,7 @@ class CommandeController extends Controller
                 'statut' => $commande->statut->value,
                 'statut_libelle' => $commande->statut->libelle(),
                 'annonce_titre' => $commande->annonce->titre,
+                'peut_payer' => Gate::allows('payer', $commande),
             ],
         ]);
     }

@@ -1,10 +1,22 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
-defineProps({ commande: Object });
+const props = defineProps({ commande: Object });
+
+const form = useForm({});
 
 const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
+
+const payer = () => form.post(route('paiement.payer', props.commande.id));
+
+const couleurs = {
+    en_attente: 'bg-yellow-100 text-yellow-800',
+    payee: 'bg-green-100 text-green-800',
+    echouee: 'bg-red-100 text-red-800',
+    annulee: 'bg-gray-100 text-gray-600',
+};
 </script>
 
 <template>
@@ -20,15 +32,24 @@ const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
                 <div class="space-y-3 rounded-lg bg-white p-6 shadow">
                     <p class="text-xs text-gray-500">Référence {{ commande.reference }}</p>
                     <p class="font-semibold">{{ commande.annonce_titre }}</p>
-                    <p class="text-sm text-gray-600">{{ commande.libelle }} · {{ commande.duree_jours }} jours</p>
+                    <p class="text-sm text-gray-600">{{ commande.libelle }}</p>
                     <p class="text-2xl font-bold">{{ prix(commande.montant) }}</p>
-                    <span class="inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800">
+                    <span class="inline-block rounded-full px-3 py-1 text-xs font-medium" :class="couleurs[commande.statut]">
                         {{ commande.statut_libelle }}
                     </span>
                 </div>
 
-                <p class="rounded-lg bg-blue-50 p-4 text-sm text-blue-800">
-                    Le paiement mobile sera disponible à la prochaine étape du développement.
+                <div v-if="commande.peut_payer">
+                    <PrimaryButton :disabled="form.processing" @click="payer">
+                        Payer {{ prix(commande.montant) }}
+                    </PrimaryButton>
+                </div>
+
+                <p v-if="commande.statut === 'payee'" class="rounded-lg bg-green-50 p-4 text-sm text-green-800">
+                    Paiement reçu. Votre annonce est en cours de modération : elle sera publiée après validation.
+                </p>
+                <p v-if="commande.statut === 'echouee'" class="rounded-lg bg-red-50 p-4 text-sm text-red-800">
+                    Le paiement a échoué. Vous pouvez recommencer depuis « Mes annonces ».
                 </p>
 
                 <Link :href="route('bailleur.annonces.index')" class="text-sm text-indigo-600 underline">
