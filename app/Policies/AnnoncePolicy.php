@@ -40,6 +40,12 @@ class AnnoncePolicy
         return $this->create($user) && $this->update($user, $annonce);
     }
 
+    public function payer(User $user, Annonce $annonce): bool
+    {
+        return $this->estProprietaire($user, $annonce)
+            && $annonce->statut === StatutAnnonce::EnAttentePaiement;
+    }
+
     public function reouvrir(User $user, Annonce $annonce): bool
     {
         return $this->estProprietaire($user, $annonce)

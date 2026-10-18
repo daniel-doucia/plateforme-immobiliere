@@ -74,7 +74,7 @@ const supprimer = (id) => {
                         Motif du rejet : {{ a.motif_rejet }}
                     </p>
                     <p v-if="a.statut === 'en_attente_paiement'" class="text-sm text-yellow-800">
-                        Le paiement en ligne sera disponible prochainement.
+                        <Link :href="route('bailleur.commandes.create', a.id)" class="font-semibold underline">Choisir un forfait et payer</Link>
                     </p>
 
                     <div class="flex flex-wrap gap-2">

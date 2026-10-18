@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Bailleur\AnnonceController;
+use App\Http\Controllers\Bailleur\CommandeController;
 use App\Http\Controllers\Bailleur\ProfilController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,8 @@ Route::middleware(['auth', 'verified', 'role:bailleur'])
         Route::post('/annonces/{annonce}/rouvrir', [AnnonceController::class, 'rouvrir'])->name('annonces.rouvrir');
         Route::post('/annonces/{annonce}/cloturer', [AnnonceController::class, 'cloturer'])->name('annonces.cloturer');
         Route::delete('/annonces/{annonce}', [AnnonceController::class, 'destroy'])->name('annonces.destroy');
+
+        Route::get('/annonces/{annonce}/forfait', [CommandeController::class, 'create'])->name('commandes.create');
+        Route::post('/annonces/{annonce}/commandes', [CommandeController::class, 'store'])->name('commandes.store');
+        Route::get('/commandes/{commande}', [CommandeController::class, 'show'])->name('commandes.show');
     });
