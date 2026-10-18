@@ -13,7 +13,10 @@ const page = usePage();
 const roles = computed(() => Object.values(page.props.auth.roles ?? []));
 
 const menu = computed(() => {
-    const liens = [{ nom: 'Tableau de bord', route: 'dashboard', actif: 'dashboard' }];
+    const liens = [
+        { nom: 'Tableau de bord', route: 'dashboard', actif: 'dashboard' },
+        { nom: 'Annonces', route: 'annonces.index', actif: 'annonces.*' },
+    ];
 
     if (roles.value.includes('bailleur')) {
         liens.push(
