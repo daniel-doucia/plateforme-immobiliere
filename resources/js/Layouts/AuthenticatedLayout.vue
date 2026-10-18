@@ -11,55 +11,54 @@ const showingNavigationDropdown = ref(false);
 
 const page = usePage();
 const roles = computed(() => Object.values(page.props.auth.roles ?? []));
-const estAdmin = computed(() => roles.value.includes('admin'));
-const estBailleur = computed(() => roles.value.includes('bailleur'));
+
+const menu = computed(() => {
+    const liens = [{ nom: 'Tableau de bord', route: 'dashboard', actif: 'dashboard' }];
+
+    if (roles.value.includes('bailleur')) {
+        liens.push(
+            { nom: 'Mes annonces', route: 'bailleur.annonces.index', actif: 'bailleur.annonces.*' },
+            { nom: 'Mon profil bailleur', route: 'bailleur.profil.edit', actif: 'bailleur.profil.*' },
+        );
+    }
+
+    if (roles.value.includes('admin')) {
+        liens.push(
+            { nom: 'Administration', route: 'admin.dashboard', actif: 'admin.dashboard' },
+            { nom: 'Vérifications', route: 'admin.verifications.index', actif: 'admin.verifications.*' },
+        );
+    }
+
+    return liens;
+});
 </script>
 
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav class="border-b border-gray-100 bg-white">
-                <!-- Menu principal -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
                         <div class="flex">
-                            <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
                                     <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
-                            <!-- Liens de navigation -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Tableau de bord
-                                </NavLink>
-
                                 <NavLink
-                                    v-if="estBailleur"
-                                    :href="route('bailleur.profil.edit')"
-                                    :active="route().current('bailleur.*')"
+                                    v-for="lien in menu"
+                                    :key="lien.route"
+                                    :href="route(lien.route)"
+                                    :active="route().current(lien.actif)"
                                 >
-                                    Mon profil bailleur
+                                    {{ lien.nom }}
                                 </NavLink>
-
-                                <template v-if="estAdmin">
-                                    <NavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
-                                        Administration
-                                    </NavLink>
-                                    <NavLink
-                                        :href="route('admin.verifications.index')"
-                                        :active="route().current('admin.verifications.*')"
-                                    >
-                                        Vérifications
-                                    </NavLink>
-                                </template>
                             </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Menu du compte -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
@@ -96,7 +95,6 @@ const estBailleur = computed(() => roles.value.includes('bailleur'));
                             </div>
                         </div>
 
-                        <!-- Bouton menu mobile -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
                                 @click="showingNavigationDropdown = !showingNavigationDropdown"
@@ -129,32 +127,16 @@ const estBailleur = computed(() => roles.value.includes('bailleur'));
                     </div>
                 </div>
 
-                <!-- Menu mobile -->
                 <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
                     <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Tableau de bord
-                        </ResponsiveNavLink>
-
                         <ResponsiveNavLink
-                            v-if="estBailleur"
-                            :href="route('bailleur.profil.edit')"
-                            :active="route().current('bailleur.*')"
+                            v-for="lien in menu"
+                            :key="lien.route"
+                            :href="route(lien.route)"
+                            :active="route().current(lien.actif)"
                         >
-                            Mon profil bailleur
+                            {{ lien.nom }}
                         </ResponsiveNavLink>
-
-                        <template v-if="estAdmin">
-                            <ResponsiveNavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
-                                Administration
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('admin.verifications.index')"
-                                :active="route().current('admin.verifications.*')"
-                            >
-                                Vérifications
-                            </ResponsiveNavLink>
-                        </template>
                     </div>
 
                     <div class="border-t border-gray-200 pb-1 pt-4">
@@ -173,14 +155,12 @@ const estBailleur = computed(() => roles.value.includes('bailleur'));
                 </div>
             </nav>
 
-            <!-- Titre de la page -->
             <header class="bg-white shadow" v-if="$slots.header">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
 
-            <!-- Contenu -->
             <main>
                 <slot />
             </main>
