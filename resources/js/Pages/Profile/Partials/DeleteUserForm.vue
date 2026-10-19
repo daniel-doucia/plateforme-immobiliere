@@ -32,7 +32,9 @@ const deleteUser = () => {
     form.delete(route('profile.destroy'), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
-        onError: () => passwordInput.value.focus(),
+        onError: (erreurs) => {
+            if (erreurs.password) passwordInput.value.focus();
+        },
         onFinish: () => form.reset(),
     });
 };
@@ -44,7 +46,9 @@ const deleteUser = () => {
             <h2 class="text-lg font-medium text-gray-900">Supprimer le compte</h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Une fois votre compte supprimé, toutes ses données seront définitivement effacées.
+                Une fois votre compte supprimé, vos données personnelles seront effacées. Un compte qui a déjà publié
+                des annonces ou effectué des paiements doit être conservé pour la comptabilité : dans ce cas,
+                contactez-nous.
             </p>
         </header>
 
@@ -72,6 +76,7 @@ const deleteUser = () => {
                     />
 
                     <InputError :message="form.errors.password" class="mt-2" />
+                    <InputError :message="form.errors.compte" class="mt-2" />
                 </div>
 
                 <div class="mt-6 flex justify-end">
