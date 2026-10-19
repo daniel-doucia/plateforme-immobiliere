@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BailleurController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LocalisationController;
 use App\Http\Controllers\Admin\ModerationController;
@@ -11,6 +12,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
+
+        Route::get('/bailleurs', [BailleurController::class, 'index'])->name('bailleurs.index');
 
         Route::get('/verifications', [VerificationBailleurController::class, 'index'])->name('verifications.index');
         Route::get('/verifications/{profil}/piece', [VerificationBailleurController::class, 'piece'])->name('verifications.piece');

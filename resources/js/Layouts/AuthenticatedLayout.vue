@@ -29,6 +29,7 @@ const menu = computed(() => {
         liens.push(
             { nom: 'Administration', route: 'admin.dashboard', actif: 'admin.dashboard' },
             { nom: 'Vérifications', route: 'admin.verifications.index', actif: 'admin.verifications.*' },
+            { nom: 'Bailleurs', route: 'admin.bailleurs.index', actif: 'admin.bailleurs.*' },
         );
     }
 
