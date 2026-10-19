@@ -46,6 +46,12 @@ class AnnoncePolicy
             && $annonce->statut === StatutAnnonce::EnAttentePaiement;
     }
 
+    public function renouveler(User $user, Annonce $annonce): bool
+    {
+        return $this->estProprietaire($user, $annonce)
+            && $annonce->statut === StatutAnnonce::Expiree;
+    }
+
     public function reouvrir(User $user, Annonce $annonce): bool
     {
         return $this->estProprietaire($user, $annonce)

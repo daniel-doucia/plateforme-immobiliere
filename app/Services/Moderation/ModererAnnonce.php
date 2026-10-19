@@ -32,9 +32,11 @@ class ModererAnnonce
 
             $annonce->transitionner(StatutAnnonce::Publiee);
 
-            // La durée démarre à la validation, pas au paiement
+            // La durée démarre à la validation, pas au paiement ;
+            // le rappel est remis à zéro pour que ce nouveau cycle soit rappelé à son tour
             $annonce->forceFill([
                 'expire_le' => now()->addDays($commande->duree_jours),
+                'rappel_expiration_le' => null,
                 'motif_rejet' => null,
             ])->save();
 

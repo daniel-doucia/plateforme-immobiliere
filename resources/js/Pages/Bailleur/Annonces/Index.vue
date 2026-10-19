@@ -16,6 +16,8 @@ const couleurs = {
 
 const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
 
+const date = (iso) => new Date(iso).toLocaleDateString('fr-FR');
+
 const action = (nom, id, message = null) => {
     if (!message || confirm(message)) {
         router.post(route(nom, id), {}, { preserveScroll: true });
@@ -62,7 +64,8 @@ const supprimer = (id) => {
                             <p class="font-semibold">{{ a.titre }}</p>
                             <p class="text-sm text-gray-600">{{ a.type_bien }} · {{ a.type_offre }} · {{ a.lieu }}</p>
                             <p class="text-sm font-medium">
-                                {{ prix(a.prix) }} <span v-if="a.periodicite" class="font-normal text-gray-500">{{ a.periodicite }}</span>
+                                {{ prix(a.prix) }}
+                                <span v-if="a.periodicite" class="font-normal text-gray-500">{{ a.periodicite }}</span>
                             </p>
                         </div>
                         <span class="rounded-full px-3 py-1 text-xs font-medium" :class="couleurs[a.statut]">
@@ -70,6 +73,12 @@ const supprimer = (id) => {
                         </span>
                     </div>
 
+                    <p v-if="a.statut === 'publiee' && a.expire_le" class="text-sm text-gray-600">
+                        En ligne jusqu'au {{ date(a.expire_le) }}.
+                    </p>
+                    <p v-if="a.statut === 'expiree'" class="text-sm text-orange-700">
+                        Cette annonce a expiré et n'est plus visible. Renouvelez-la pour la remettre en ligne.
+                    </p>
                     <p v-if="a.statut === 'rejetee' && a.motif_rejet" class="text-sm text-red-700">
                         Motif du rejet : {{ a.motif_rejet }}. Correction gratuite : votre paiement est conservé, corrigez puis soumettez à nouveau.
                     </p>
@@ -91,6 +100,13 @@ const supprimer = (id) => {
                             @click="action('bailleur.annonces.soumettre', a.id, 'Soumettre cette annonce pour publication ?')"
                         >
                             Soumettre
+                        </button>
+                        <button
+                            v-if="a.peut.renouveler"
+                            class="rounded-md bg-indigo-600 px-3 py-1 text-sm text-white"
+                            @click="action('bailleur.annonces.renouveler', a.id)"
+                        >
+                            Renouveler
                         </button>
                         <button
                             v-if="a.peut.rouvrir"

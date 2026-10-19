@@ -130,6 +130,7 @@ class AnnonceController extends Controller
                 'soumettre' => Gate::allows('soumettre', $a),
                 'rouvrir' => Gate::allows('reouvrir', $a),
                 'cloturer' => Gate::allows('cloturer', $a),
+                'renouveler' => Gate::allows('renouveler', $a),
                 'supprimer' => Gate::allows('delete', $a),
             ],
         ];
