@@ -1,18 +1,12 @@
 <?php
 
+use App\Http\Controllers\AnnoncePubliqueController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+// Page d'accueil : la liste des annonces
+Route::get('/', [AnnoncePubliqueController::class, 'index'])->name('accueil');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
