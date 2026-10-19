@@ -1,13 +1,17 @@
 <script setup>
 import PublicLayout from '@/Layouts/PublicLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
     annonce: Object,
+    photos: Array,
     bailleur: Object,
     contact: Object,
     peut_voir_contact: Boolean,
 });
+
+const courante = ref(0);
 
 const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
 
@@ -32,8 +36,32 @@ const date = props.annonce.publiee_le
         <div class="mx-auto max-w-3xl space-y-4 px-4 py-6">
             <Link :href="route('annonces.index')" class="text-sm text-indigo-600">← Toutes les annonces</Link>
 
-            <div class="flex h-48 items-center justify-center rounded-lg bg-gray-200 text-sm text-gray-500">
-                Photos à venir
+            <div v-if="photos.length" class="space-y-2">
+                <img
+                    :src="photos[courante].url"
+                    :alt="annonce.titre"
+                    class="h-64 w-full rounded-lg bg-gray-200 object-cover sm:h-96"
+                />
+                <div v-if="photos.length > 1" class="flex gap-2 overflow-x-auto pb-1">
+                    <button
+                        v-for="(p, i) in photos"
+                        :key="p.id"
+                        type="button"
+                        class="shrink-0"
+                        @click="courante = i"
+                    >
+                        <img
+                            :src="p.url"
+                            alt=""
+                            loading="lazy"
+                            class="h-16 w-20 rounded object-cover"
+                            :class="i === courante ? 'ring-2 ring-indigo-600' : 'opacity-70'"
+                        />
+                    </button>
+                </div>
+            </div>
+            <div v-else class="flex h-48 items-center justify-center rounded-lg bg-gray-200 text-sm text-gray-500">
+                Pas de photo
             </div>
 
             <div class="space-y-3 rounded-lg bg-white p-6 shadow">

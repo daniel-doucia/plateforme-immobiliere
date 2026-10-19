@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Bailleur\AnnonceController;
 use App\Http\Controllers\Bailleur\CommandeController;
+use App\Http\Controllers\Bailleur\PhotoController;
 use App\Http\Controllers\Bailleur\ProfilController;
 use App\Http\Controllers\Bailleur\RenouvellementController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,11 @@ Route::middleware(['auth', 'verified', 'role:bailleur'])
         Route::post('/annonces/{annonce}/cloturer', [AnnonceController::class, 'cloturer'])->name('annonces.cloturer');
         Route::post('/annonces/{annonce}/renouveler', RenouvellementController::class)->name('annonces.renouveler');
         Route::delete('/annonces/{annonce}', [AnnonceController::class, 'destroy'])->name('annonces.destroy');
+
+        Route::get('/annonces/{annonce}/photos', [PhotoController::class, 'index'])->name('annonces.photos.index');
+        Route::post('/annonces/{annonce}/photos', [PhotoController::class, 'store'])->name('annonces.photos.store');
+        Route::delete('/annonces/{annonce}/photos/{photo}', [PhotoController::class, 'destroy'])->name('annonces.photos.destroy');
+        Route::post('/annonces/{annonce}/photos/{photo}/principale', [PhotoController::class, 'principale'])->name('annonces.photos.principale');
 
         Route::get('/annonces/{annonce}/forfait', [CommandeController::class, 'create'])->name('commandes.create');
         Route::post('/annonces/{annonce}/commandes', [CommandeController::class, 'store'])->name('commandes.store');

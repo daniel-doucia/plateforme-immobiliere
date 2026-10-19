@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TypeBien;
 use App\Enums\TypeOffre;
 use App\Models\Annonce;
+use App\Models\AnnoncePhoto;
 use App\Models\Ville;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class AnnoncePubliqueController extends Controller
         $f = $this->filtres($request);
 
         $requete = Annonce::publiees()
-            ->with('quartier.ville')
+            ->with(['quartier.ville', 'photos'])
             ->when($f['type_offre'] ?? null, fn ($q, $v) => $q->where('type_offre', $v))
             ->when($f['type_bien'] ?? null, fn ($q, $v) => $q->where('type_bien', $v))
             ->when($f['quartier_id'] ?? null, fn ($q, $v) => $q->where('quartier_id', $v))
@@ -64,7 +65,7 @@ class AnnoncePubliqueController extends Controller
     public function show(Request $request, string $slug): Response
     {
         $annonce = Annonce::publiees()
-            ->with(['quartier.ville', 'user:id,name,telephone'])
+            ->with(['quartier.ville', 'user:id,name,telephone', 'photos'])
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -102,6 +103,9 @@ class AnnoncePubliqueController extends Controller
                 'lieu' => $annonce->quartier->nom.', '.$annonce->quartier->ville->nom,
                 'publiee_le' => $annonce->publiee_le?->toIso8601String(),
             ],
+            'photos' => $annonce->photos
+                ->map(fn (AnnoncePhoto $p) => ['id' => $p->id, 'url' => $p->url()])
+                ->values(),
             'bailleur' => ['nom' => $annonce->user->name],
             'peut_voir_contact' => $peutVoirContact,
             'contact' => $contact,
@@ -137,6 +141,7 @@ class AnnoncePubliqueController extends Controller
             'lieu' => $a->quartier->nom.', '.$a->quartier->ville->nom,
             'superficie' => $a->superficie,
             'nb_chambres' => $a->nb_chambres,
+            'photo' => $a->photos->first()?->url(),
         ];
     }
 

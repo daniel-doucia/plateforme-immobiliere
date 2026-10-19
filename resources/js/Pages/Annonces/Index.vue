@@ -111,8 +111,17 @@ const champ = 'rounded-md border-gray-300 text-sm';
                     :href="route('annonces.show', a.slug)"
                     class="block overflow-hidden rounded-lg bg-white shadow transition hover:shadow-md"
                 >
-                    <div class="flex h-36 items-center justify-center bg-gray-200 text-sm text-gray-500">
-                        Photo à venir
+                    <div class="h-36 bg-gray-200">
+                        <img
+                            v-if="a.photo"
+                            :src="a.photo"
+                            :alt="a.titre"
+                            loading="lazy"
+                            class="h-full w-full object-cover"
+                        />
+                        <div v-else class="flex h-full items-center justify-center text-sm text-gray-500">
+                            Pas de photo
+                        </div>
                     </div>
                     <div class="space-y-1 p-4">
                         <p class="text-xs font-semibold uppercase text-indigo-600">{{ a.type_offre }} · {{ a.type_bien }}</p>

@@ -94,6 +94,12 @@ const supprimer = (id) => {
                         >
                             Modifier
                         </Link>
+                        <Link
+                            :href="route('bailleur.annonces.photos.index', a.id)"
+                            class="rounded-md border border-gray-300 px-3 py-1 text-sm"
+                        >
+                            Photos
+                        </Link>
                         <button
                             v-if="a.peut.soumettre"
                             class="rounded-md bg-green-600 px-3 py-1 text-sm text-white"

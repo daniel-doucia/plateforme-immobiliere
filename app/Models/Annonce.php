@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Annonce extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public const MAX_PHOTOS = 8;
 
     /**
      * Le statut, le slug et les dates de publication n'y figurent volontairement pas :
@@ -52,6 +55,7 @@ class Annonce extends Model
             'longitude' => 'decimal:7',
             'publiee_le' => 'datetime',
             'expire_le' => 'datetime',
+            'rappel_expiration_le' => 'datetime',
         ];
     }
 
@@ -74,6 +78,11 @@ class Annonce extends Model
     public function quartier(): BelongsTo
     {
         return $this->belongsTo(Quartier::class);
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(AnnoncePhoto::class)->orderBy('ordre')->orderBy('id');
     }
 
     /** Annonces visibles par le public : publiées et non expirées. */
