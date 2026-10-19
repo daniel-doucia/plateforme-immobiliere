@@ -87,6 +87,9 @@ const supprimer = (id) => {
                     </p>
 
                     <div class="flex flex-wrap gap-2">
+                        <p v-if="a.statut === 'brouillon' && !a.peut.soumettre" class="w-full text-xs text-orange-700">
+                            Pour soumettre : compte vérifié et au moins une photo (bouton « Photos »).
+                        </p>
                         <Link
                             v-if="a.peut.modifier"
                             :href="route('bailleur.annonces.edit', a.id)"

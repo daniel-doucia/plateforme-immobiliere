@@ -37,7 +37,9 @@ class AnnoncePolicy
 
     public function soumettre(User $user, Annonce $annonce): bool
     {
-        return $this->create($user) && $this->update($user, $annonce);
+        return $this->create($user)
+            && $this->update($user, $annonce)
+            && (! config('annonces.photo_obligatoire') || $annonce->photos()->exists());
     }
 
     public function payer(User $user, Annonce $annonce): bool

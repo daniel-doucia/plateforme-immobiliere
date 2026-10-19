@@ -73,6 +73,20 @@ const detail = (a) =>
 
                     <p class="whitespace-pre-line rounded-md bg-gray-50 p-3 text-sm text-gray-800">{{ a.description }}</p>
 
+                    <div v-if="a.photos.length" class="flex gap-2 overflow-x-auto pb-1">
+                        <a
+                            v-for="p in a.photos"
+                            :key="p.id"
+                            :href="p.url"
+                            target="_blank"
+                            rel="noopener"
+                            class="shrink-0"
+                        >
+                            <img :src="p.url" alt="" loading="lazy" class="h-24 w-32 rounded object-cover" />
+                        </a>
+                    </div>
+                    <p v-else class="text-sm font-medium text-orange-700">Aucune photo.</p>
+
                     <div class="text-sm text-gray-600">
                         Bailleur : <span class="font-medium">{{ a.bailleur.nom }}</span>
                         · {{ a.bailleur.telephone }} · {{ a.bailleur.email }}

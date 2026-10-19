@@ -6,6 +6,7 @@ use App\Enums\StatutAnnonce;
 use App\Enums\StatutCommande;
 use App\Http\Controllers\Controller;
 use App\Models\Annonce;
+use App\Models\AnnoncePhoto;
 use App\Models\Commande;
 use App\Services\Moderation\ModererAnnonce;
 use DomainException;
@@ -18,7 +19,7 @@ class ModerationController extends Controller
 {
     public function index(): Response
     {
-        $page = Annonce::with(['user:id,name,email,telephone', 'quartier.ville'])
+        $page = Annonce::with(['user:id,name,email,telephone', 'quartier.ville', 'photos'])
             ->where('statut', StatutAnnonce::EnModeration)
             ->oldest('updated_at')
             ->paginate(10)
@@ -50,6 +51,9 @@ class ModerationController extends Controller
                 'nb_salles_bain' => $a->nb_salles_bain,
                 'adresse_indicative' => $a->adresse_indicative,
                 'lieu' => $a->quartier->nom.', '.$a->quartier->ville->nom,
+                'photos' => $a->photos
+                    ->map(fn (AnnoncePhoto $p) => ['id' => $p->id, 'url' => $p->url()])
+                    ->values(),
                 'bailleur' => [
                     'nom' => $a->user->name,
                     'email' => $a->user->email,
