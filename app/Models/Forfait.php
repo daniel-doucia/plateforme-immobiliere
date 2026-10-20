@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\TypeBien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Forfait extends Model
 {
@@ -19,6 +20,11 @@ class Forfait extends Model
             'actif' => 'boolean',
             'ordre' => 'integer',
         ];
+    }
+
+    public function commandes(): HasMany
+    {
+        return $this->hasMany(Commande::class);
     }
 
     public function scopeActifs(Builder $query): Builder

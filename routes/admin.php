@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BailleurController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ForfaitController;
 use App\Http\Controllers\Admin\LocalisationController;
 use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\VerificationBailleurController;
@@ -14,6 +15,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::get('/', DashboardController::class)->name('dashboard');
 
         Route::get('/bailleurs', [BailleurController::class, 'index'])->name('bailleurs.index');
+
+        Route::get('/forfaits', [ForfaitController::class, 'index'])->name('forfaits.index');
+        Route::post('/forfaits', [ForfaitController::class, 'store'])->name('forfaits.store');
+        Route::patch('/forfaits/{forfait}', [ForfaitController::class, 'update'])->name('forfaits.update');
+        Route::delete('/forfaits/{forfait}', [ForfaitController::class, 'destroy'])->name('forfaits.destroy');
 
         Route::get('/verifications', [VerificationBailleurController::class, 'index'])->name('verifications.index');
         Route::get('/verifications/{profil}/piece', [VerificationBailleurController::class, 'piece'])->name('verifications.piece');
