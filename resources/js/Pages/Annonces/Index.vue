@@ -1,6 +1,6 @@
 <script setup>
 import PublicLayout from '@/Layouts/PublicLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, reactive } from 'vue';
 
 const props = defineProps({
@@ -11,11 +11,21 @@ const props = defineProps({
     types_offre: Array,
 });
 
+const page = usePage();
 const form = reactive({ ...props.filtres });
 
 const quartiers = computed(
     () => props.villes.find((v) => v.id === Number(form.ville_id))?.quartiers ?? [],
 );
+
+const criteres = computed(() =>
+    Object.fromEntries(
+        Object.entries(form).filter(([cle, valeur]) => cle !== 'tri' && valeur !== '' && valeur !== null),
+    ),
+);
+
+const aDesCriteres = computed(() => Object.keys(criteres.value).length > 0);
+const erreurs = computed(() => Object.values(page.props.errors ?? {}));
 
 const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
 
@@ -42,6 +52,8 @@ const reinitialiser = () => {
     appliquer();
 };
 
+const creerAlerte = () => router.post(route('alertes.store'), criteres.value, { preserveScroll: true });
+
 const champ = 'rounded-md border-gray-300 text-sm';
 </script>
 
@@ -50,6 +62,10 @@ const champ = 'rounded-md border-gray-300 text-sm';
 
     <PublicLayout>
         <div class="mx-auto max-w-6xl space-y-6 px-4 py-6">
+            <ul v-if="erreurs.length" class="space-y-1 rounded-lg bg-red-100 p-3 text-sm text-red-800">
+                <li v-for="e in erreurs" :key="e">{{ e }}</li>
+            </ul>
+
             <form
                 class="grid grid-cols-2 gap-3 rounded-lg bg-white p-4 shadow md:grid-cols-4"
                 @submit.prevent="appliquer"
@@ -99,6 +115,24 @@ const champ = 'rounded-md border-gray-300 text-sm';
                     </button>
                 </div>
             </form>
+
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+                <template v-if="$page.props.auth.user">
+                    <button
+                        v-if="aDesCriteres"
+                        class="rounded-md border border-indigo-600 px-3 py-1.5 font-semibold text-indigo-600"
+                        @click="creerAlerte"
+                    >
+                        Créer une alerte pour cette recherche
+                    </button>
+                    <span v-else class="text-gray-500">Choisissez des critères pour pouvoir créer une alerte.</span>
+                    <Link :href="route('alertes.index')" class="text-indigo-600 underline">Mes alertes</Link>
+                </template>
+                <p v-else class="text-gray-600">
+                    <Link :href="route('login')" class="font-semibold text-indigo-600 underline">Connectez-vous</Link>
+                    pour être alerté par e-mail des nouvelles annonces et enregistrer des favoris.
+                </p>
+            </div>
 
             <p v-if="annonces.data.length === 0" class="rounded-lg bg-white p-8 text-center text-gray-500 shadow">
                 Aucune annonce ne correspond à votre recherche.

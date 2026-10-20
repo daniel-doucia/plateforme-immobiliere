@@ -15,6 +15,8 @@ const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
 const raccourcis = computed(() => {
     const liste = [
         { titre: 'Parcourir les annonces', texte: 'Louer ou acheter un bien.', route: 'annonces.index' },
+        { titre: 'Mes favoris', texte: 'Retrouver les annonces enregistrées.', route: 'favoris.index' },
+        { titre: 'Mes alertes', texte: 'Être prévenu des nouvelles annonces.', route: 'alertes.index' },
     ];
 
     if (roles.value.includes('bailleur')) {

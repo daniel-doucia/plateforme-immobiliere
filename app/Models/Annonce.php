@@ -92,6 +92,29 @@ class Annonce extends Model
             ->where(fn (Builder $q) => $q->whereNull('expire_le')->orWhere('expire_le', '>', now()));
     }
 
+    /** Même règle que scopePubliees, pour une annonce déjà chargée. */
+    public function estPubliee(): bool
+    {
+        return ! $this->trashed()
+            && $this->statut === StatutAnnonce::Publiee
+            && ($this->expire_le === null || $this->expire_le->isFuture());
+    }
+
+    /** Filtres de recherche (valeurs déjà validées), partagés avec les alertes. */
+    public function scopeFiltrer(Builder $query, array $f): Builder
+    {
+        return $query
+            ->when($f['type_offre'] ?? null, fn ($q, $v) => $q->where('type_offre', $v))
+            ->when($f['type_bien'] ?? null, fn ($q, $v) => $q->where('type_bien', $v))
+            ->when($f['quartier_id'] ?? null, fn ($q, $v) => $q->where('quartier_id', $v))
+            ->when($f['ville_id'] ?? null, fn ($q, $v) => $q->whereHas('quartier', fn ($w) => $w->where('ville_id', $v)))
+            ->when($f['prix_min'] ?? null, fn ($q, $v) => $q->where('prix', '>=', $v))
+            ->when($f['prix_max'] ?? null, fn ($q, $v) => $q->where('prix', '<=', $v))
+            ->when($f['q'] ?? null, fn ($q, $v) => $q->where(
+                fn ($w) => $w->where('titre', 'like', "%{$v}%")->orWhere('description', 'like', "%{$v}%")
+            ));
+    }
+
     public function transitionner(StatutAnnonce $vers): void
     {
         if (! $this->statut->peutPasserA($vers)) {

@@ -107,6 +107,9 @@ class AnnoncePubliqueController extends Controller
                 ->map(fn (AnnoncePhoto $p) => ['id' => $p->id, 'url' => $p->url()])
                 ->values(),
             'bailleur' => ['nom' => $annonce->user->name],
+            'slug' => $annonce->slug,
+            'est_favori' => $request->user() !== null
+                && \App\Models\Favori::where('user_id', $request->user()->id)->where('annonce_id', $annonce->id)->exists(),
             'peut_voir_contact' => $peutVoirContact,
             'contact' => $contact,
         ]);

@@ -92,6 +92,8 @@ const menu = computed(() => {
 
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')"> Mon compte </DropdownLink>
+                                        <DropdownLink :href="route('favoris.index')"> Mes favoris </DropdownLink>
+                                        <DropdownLink :href="route('alertes.index')"> Mes alertes </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Déconnexion
                                         </DropdownLink>
@@ -152,6 +154,8 @@ const menu = computed(() => {
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')"> Mon compte </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('favoris.index')"> Mes favoris </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('alertes.index')"> Mes alertes </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Déconnexion
                             </ResponsiveNavLink>

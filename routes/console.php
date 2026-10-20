@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 
 \Illuminate\Support\Facades\Schedule::command('annonces:expirer')->dailyAt('01:00')->withoutOverlapping();
 \Illuminate\Support\Facades\Schedule::command('annonces:rappeler-expiration')->dailyAt('08:00')->withoutOverlapping();
+
+\Illuminate\Support\Facades\Schedule::command('alertes:envoyer')->dailyAt('09:00')->withoutOverlapping();

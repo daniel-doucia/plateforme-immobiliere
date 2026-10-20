@@ -1,6 +1,6 @@
 <script setup>
 import PublicLayout from '@/Layouts/PublicLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -9,6 +9,8 @@ const props = defineProps({
     bailleur: Object,
     contact: Object,
     peut_voir_contact: Boolean,
+    slug: String,
+    est_favori: Boolean,
 });
 
 const courante = ref(0);
@@ -27,6 +29,14 @@ const caracteristiques = [
 const date = props.annonce.publiee_le
     ? new Date(props.annonce.publiee_le).toLocaleDateString('fr-FR')
     : null;
+
+const basculerFavori = () => {
+    if (props.est_favori) {
+        router.delete(route('favoris.destroy', props.slug), { preserveScroll: true });
+    } else {
+        router.post(route('favoris.store', props.slug), {}, { preserveScroll: true });
+    }
+};
 </script>
 
 <template>
@@ -35,6 +45,10 @@ const date = props.annonce.publiee_le
     <PublicLayout>
         <div class="mx-auto max-w-3xl space-y-4 px-4 py-6">
             <Link :href="route('annonces.index')" class="text-sm text-indigo-600">← Toutes les annonces</Link>
+
+            <p v-if="$page.props.errors.favori" class="rounded-lg bg-red-100 p-3 text-sm text-red-800">
+                {{ $page.props.errors.favori }}
+            </p>
 
             <div v-if="photos.length" class="space-y-2">
                 <img
@@ -84,6 +98,21 @@ const date = props.annonce.publiee_le
 
                 <p class="whitespace-pre-line pt-2 text-gray-800">{{ annonce.description }}</p>
                 <p v-if="date" class="text-xs text-gray-400">Publiée le {{ date }}</p>
+
+                <div class="pt-2">
+                    <button
+                        v-if="$page.props.auth.user"
+                        type="button"
+                        class="rounded-md border px-3 py-1.5 text-sm font-semibold"
+                        :class="est_favori ? 'border-yellow-500 bg-yellow-50 text-yellow-700' : 'border-gray-300 text-gray-700'"
+                        @click="basculerFavori"
+                    >
+                        {{ est_favori ? '★ Retirer des favoris' : '☆ Ajouter aux favoris' }}
+                    </button>
+                    <Link v-else :href="route('login')" class="text-sm font-semibold text-indigo-600 underline">
+                        Connectez-vous pour ajouter aux favoris
+                    </Link>
+                </div>
             </div>
 
             <div class="space-y-3 rounded-lg bg-white p-6 shadow">
