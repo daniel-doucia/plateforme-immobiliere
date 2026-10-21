@@ -28,6 +28,7 @@ class AnnoncePubliqueController extends Controller
             ->when($f['ville_id'] ?? null, fn ($q, $v) => $q->whereHas('quartier', fn ($w) => $w->where('ville_id', $v)))
             ->when($f['prix_min'] ?? null, fn ($q, $v) => $q->where('prix', '>=', $v))
             ->when($f['prix_max'] ?? null, fn ($q, $v) => $q->where('prix', '<=', $v))
+            ->when($f['chambres_min'] ?? null, fn ($q, $v) => $q->where('nb_chambres', '>=', $v))
             ->when($f['q'] ?? null, fn ($q, $v) => $q->where(
                 fn ($w) => $w->where('titre', 'like', "%{$v}%")->orWhere('description', 'like', "%{$v}%")
             ));
@@ -54,6 +55,8 @@ class AnnoncePubliqueController extends Controller
                 'quartier_id' => $f['quartier_id'] ?? '',
                 'prix_min' => $f['prix_min'] ?? '',
                 'prix_max' => $f['prix_max'] ?? '',
+                'chambres_min' => $f['chambres_min'] ?? '',
+                'chambres_min' => $f['chambres_min'] ?? '',
                 'tri' => $f['tri'] ?? 'recent',
             ],
             'villes' => $this->villes(),
@@ -126,6 +129,8 @@ class AnnoncePubliqueController extends Controller
             'quartier_id' => ['nullable', 'integer', 'min:1'],
             'prix_min' => ['nullable', 'integer', 'min:0'],
             'prix_max' => ['nullable', 'integer', 'min:0'],
+            'chambres_min' => ['nullable', 'integer', 'min:1'],
+            'chambres_min' => ['nullable', 'integer', 'between:1,20'],
             'tri' => ['nullable', 'in:recent,prix_asc,prix_desc'],
         ]);
 

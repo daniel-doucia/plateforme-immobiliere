@@ -1,176 +1,166 @@
 <script setup>
-import { computed, ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link, usePage } from '@inertiajs/vue3';
-
-const showingNavigationDropdown = ref(false);
+import { computed, onBeforeUnmount, ref } from 'vue';
+import Icone from '@/Components/Icone.vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
-const roles = computed(() => Object.values(page.props.auth.roles ?? []));
+const ouvert = ref(false);
 
-const menu = computed(() => {
-    const liens = [
-        { nom: 'Tableau de bord', route: 'dashboard', actif: 'dashboard' },
-        { nom: 'Annonces', route: 'annonces.index', actif: 'annonces.*' },
+// Le menu mobile se referme après chaque navigation
+const retirer = router.on('navigate', () => (ouvert.value = false));
+onBeforeUnmount(retirer);
+
+const roles = computed(() => Object.values(page.props.auth.roles ?? []));
+const permissions = computed(() => Object.values(page.props.auth.permissions ?? []));
+
+const initiales = computed(() =>
+    (page.props.auth.user.name ?? '?')
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((mot) => mot[0].toUpperCase())
+        .join(''),
+);
+
+const sections = computed(() => {
+    const liste = [
+        {
+            titre: 'Général',
+            liens: [
+                { nom: 'Tableau de bord', route: 'dashboard', actif: 'dashboard', icone: 'accueil' },
+                { nom: 'Parcourir les annonces', route: 'annonces.index', actif: 'annonces.*', icone: 'annonces' },
+                { nom: 'Mes favoris', route: 'favoris.index', actif: 'favoris.*', icone: 'favoris' },
+                { nom: 'Mes alertes', route: 'alertes.index', actif: 'alertes.*', icone: 'alertes' },
+            ],
+        },
     ];
 
     if (roles.value.includes('bailleur')) {
-        liens.push(
-            { nom: 'Mes annonces', route: 'bailleur.annonces.index', actif: 'bailleur.annonces.*' },
-            { nom: 'Mon profil bailleur', route: 'bailleur.profil.edit', actif: 'bailleur.profil.*' },
-        );
+        liste.push({
+            titre: 'Bailleur',
+            liens: [
+                {
+                    nom: 'Mes annonces',
+                    route: 'bailleur.annonces.index',
+                    actif: ['bailleur.annonces.*', 'bailleur.commandes.*'],
+                    icone: 'maison',
+                },
+                { nom: 'Mon profil bailleur', route: 'bailleur.profil.edit', actif: 'bailleur.profil.*', icone: 'utilisateur' },
+            ],
+        });
+    }
+
+    const administration = [];
+
+    if (permissions.value.includes('annonces.moderer')) {
+        administration.push({ nom: 'Modération', route: 'admin.moderation.index', actif: 'admin.moderation.*', icone: 'bouclier' });
     }
 
     if (roles.value.includes('admin')) {
-        liens.push(
-            { nom: 'Administration', route: 'admin.dashboard', actif: 'admin.dashboard' },
-            { nom: 'Vérifications', route: 'admin.verifications.index', actif: 'admin.verifications.*' },
-            { nom: 'Bailleurs', route: 'admin.bailleurs.index', actif: 'admin.bailleurs.*' },
+        administration.push(
+            { nom: 'Vue d\'ensemble', route: 'admin.dashboard', actif: 'admin.dashboard', icone: 'graphique' },
+            { nom: 'Bailleurs', route: 'admin.bailleurs.index', actif: 'admin.bailleurs.*', icone: 'utilisateurs' },
+            { nom: 'Vérifications', route: 'admin.verifications.index', actif: 'admin.verifications.*', icone: 'bouclier' },
+            { nom: 'Tarifs', route: 'admin.forfaits.index', actif: 'admin.forfaits.*', icone: 'etiquette' },
+            { nom: 'Villes et quartiers', route: 'admin.localisation.index', actif: 'admin.localisation.*', icone: 'epingle' },
         );
     }
 
-    if (Object.values(page.props.auth.permissions ?? []).includes('annonces.moderer')) liens.push({ nom: 'Modération', route: 'admin.moderation.index', actif: 'admin.moderation.*' });
-    return liens;
+    if (administration.length) {
+        liste.push({ titre: 'Administration', liens: administration });
+    }
+
+    return liste;
 });
+
+const estActif = (lien) => [].concat(lien.actif).some((motif) => route().current(motif));
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="border-b border-gray-100 bg-white">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
-                        <div class="flex">
-                            <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
+    <div class="min-h-screen bg-gray-50 lg:flex">
+        <!-- Barre du haut (mobile) -->
+        <div class="sticky top-0 z-30 flex items-center justify-between bg-brand-900 px-4 py-3 text-white lg:hidden">
+            <button type="button" class="rounded-md p-1" aria-label="Ouvrir le menu" @click="ouvert = true">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <Link :href="route('dashboard')" class="font-bold">ImmoTchad</Link>
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-accent-500 text-sm font-bold text-brand-950">
+                {{ initiales }}
+            </span>
+        </div>
 
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    v-for="lien in menu"
-                                    :key="lien.route"
-                                    :href="route(lien.route)"
-                                    :active="route().current(lien.actif)"
-                                >
-                                    {{ lien.nom }}
-                                </NavLink>
-                            </div>
-                        </div>
+        <!-- Voile (mobile) -->
+        <div v-if="ouvert" class="fixed inset-0 z-40 bg-black/50 lg:hidden" @click="ouvert = false"></div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div class="relative ms-3">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
+        <!-- Menu latéral -->
+        <aside
+            class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto bg-brand-900 text-brand-100 transition-transform lg:sticky lg:top-0 lg:h-screen lg:shrink-0"
+            :class="ouvert ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+        >
+            <div class="flex items-center justify-between px-5 py-5">
+                <Link :href="route('dashboard')" class="flex items-center gap-2 text-lg font-bold text-white">
+                    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 11l9-8 9 8" />
+                        <path d="M5 10v10h14V10" />
+                        <path d="M10 20v-6h4v6" />
+                    </svg>
+                    ImmoTchad
+                </Link>
+                <button type="button" class="rounded-md p-1 lg:hidden" aria-label="Fermer le menu" @click="ouvert = false">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
-                                                <svg
-                                                    class="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Mon compte </DropdownLink>
-                                        <DropdownLink :href="route('favoris.index')"> Mes favoris </DropdownLink>
-                                        <DropdownLink :href="route('alertes.index')"> Mes alertes </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Déconnexion
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <button
-                                @click="showingNavigationDropdown = !showingNavigationDropdown"
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+            <nav class="flex-1 space-y-5 px-3 pb-4">
+                <div v-for="s in sections" :key="s.titre">
+                    <p class="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-brand-300">{{ s.titre }}</p>
+                    <ul class="space-y-1">
+                        <li v-for="lien in s.liens" :key="lien.route">
+                            <Link
+                                :href="route(lien.route)"
+                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition"
+                                :class="estActif(lien) ? 'bg-accent-500 font-semibold text-brand-950' : 'hover:bg-white/10'"
                             >
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex': !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex': showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            v-for="lien in menu"
-                            :key="lien.route"
-                            :href="route(lien.route)"
-                            :active="route().current(lien.actif)"
-                        >
-                            {{ lien.nom }}
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div class="border-t border-gray-200 pb-1 pt-4">
-                        <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">{{ $page.props.auth.user.name }}</div>
-                            <div class="text-sm font-medium text-gray-500">{{ $page.props.auth.user.email }}</div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> Mon compte </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('favoris.index')"> Mes favoris </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('alertes.index')"> Mes alertes </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Déconnexion
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
+                                <Icone :nom="lien.icone === 'maison' ? 'accueil' : lien.icone" />
+                                {{ lien.nom }}
+                            </Link>
+                        </li>
+                    </ul>
                 </div>
             </nav>
 
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div class="space-y-2 border-t border-white/10 p-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-500 text-sm font-bold text-brand-950">
+                        {{ initiales }}
+                    </span>
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-semibold text-white">{{ $page.props.auth.user.name }}</p>
+                        <p class="truncate text-xs text-brand-300">{{ $page.props.auth.user.email }}</p>
+                    </div>
+                </div>
+                <Link :href="route('profile.edit')" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-white/10">
+                    <Icone nom="utilisateur" /> Mon compte
+                </Link>
+                <Link :href="route('logout')" method="post" as="button" class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-white/10">
+                    <Icone nom="deconnexion" /> Déconnexion
+                </Link>
+            </div>
+        </aside>
+
+        <!-- Contenu -->
+        <div class="flex min-w-0 flex-1 flex-col">
+            <header v-if="$slots.header" class="border-b border-gray-200 bg-white">
+                <div class="px-4 py-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
 
-            <main>
+            <main class="flex-1">
                 <slot />
             </main>
         </div>

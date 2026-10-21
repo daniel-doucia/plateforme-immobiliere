@@ -110,6 +110,7 @@ class Annonce extends Model
             ->when($f['ville_id'] ?? null, fn ($q, $v) => $q->whereHas('quartier', fn ($w) => $w->where('ville_id', $v)))
             ->when($f['prix_min'] ?? null, fn ($q, $v) => $q->where('prix', '>=', $v))
             ->when($f['prix_max'] ?? null, fn ($q, $v) => $q->where('prix', '<=', $v))
+            ->when($f['chambres_min'] ?? null, fn ($q, $v) => $q->where('nb_chambres', '>=', $v))
             ->when($f['q'] ?? null, fn ($q, $v) => $q->where(
                 fn ($w) => $w->where('titre', 'like', "%{$v}%")->orWhere('description', 'like', "%{$v}%")
             ));

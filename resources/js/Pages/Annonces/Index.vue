@@ -1,7 +1,7 @@
 <script setup>
 import PublicLayout from '@/Layouts/PublicLayout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 const props = defineProps({
     annonces: Object,
@@ -13,18 +13,27 @@ const props = defineProps({
 
 const page = usePage();
 const form = reactive({ ...props.filtres });
+const plus = ref(Boolean(props.filtres.q || props.filtres.quartier_id || props.filtres.tri !== 'recent'));
 
 const quartiers = computed(
     () => props.villes.find((v) => v.id === Number(form.ville_id))?.quartiers ?? [],
 );
 
+// Les alertes ne gèrent pas encore le nombre de chambres
 const criteres = computed(() =>
     Object.fromEntries(
-        Object.entries(form).filter(([cle, valeur]) => cle !== 'tri' && valeur !== '' && valeur !== null),
+        Object.entries(form).filter(
+            ([cle, valeur]) => !['tri', 'chambres_min'].includes(cle) && valeur !== '' && valeur !== null,
+        ),
     ),
 );
 
 const aDesCriteres = computed(() => Object.keys(criteres.value).length > 0);
+
+const filtresActifs = computed(() =>
+    Object.entries(form).some(([cle, valeur]) => cle !== 'tri' && valeur !== '' && valeur !== null),
+);
+
 const erreurs = computed(() => Object.values(page.props.errors ?? {}));
 
 const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
@@ -58,14 +67,11 @@ const choisirOffre = (valeur) => {
     appliquer();
 };
 
-const choisirBien = (valeur) => {
-    form.type_bien = form.type_bien === valeur ? '' : valeur;
-    appliquer();
-};
-
 const creerAlerte = () => router.post(route('alertes.store'), criteres.value, { preserveScroll: true });
 
-const champ = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-brand-500 focus:ring-brand-500';
+const champ =
+    'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-brand-500 focus:ring-brand-500 lg:border-0 lg:bg-transparent lg:p-0 lg:font-semibold lg:focus:ring-0';
+const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-brand-500 focus:ring-brand-500';
 </script>
 
 <template>
@@ -73,20 +79,22 @@ const champ = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border
 
     <PublicLayout>
         <!-- Bandeau -->
-        <section class="relative overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600">
-            <div class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-400/20 blur-3xl"></div>
-            <div class="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full bg-accent-400/20 blur-3xl"></div>
+        <section
+            class="relative overflow-hidden bg-brand-900"
+            style="background-image: url('/images/hero-n-djamena.jpg'); background-size: cover; background-position: 72% center;"
+        >
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-950/90 via-brand-900/70 to-brand-800/25"></div>
 
-            <div class="relative mx-auto max-w-6xl px-4 pb-24 pt-10 sm:pb-28 sm:pt-14">
+            <div class="relative mx-auto max-w-6xl px-4 pb-28 pt-10 sm:pb-32 sm:pt-14">
                 <p class="text-sm font-semibold uppercase tracking-wide text-accent-400">Immobilier au Tchad</p>
                 <h1 class="mt-2 max-w-2xl text-3xl font-extrabold leading-tight text-white sm:text-5xl">
-                    Trouvez le bien qui vous correspond
+                    Trouvez votre logement idéal <span class="text-accent-400">au Tchad</span>
                 </h1>
                 <p class="mt-3 max-w-xl text-base text-brand-100">
-                    Chambres, appartements, maisons et terrains, publiés par des bailleurs vérifiés.
+                    Appartements, maisons, chambres, terrains : achetez ou louez en toute confiance auprès de bailleurs vérifiés.
                 </p>
 
-                <div class="mt-6 flex flex-wrap gap-2">
+                <div class="mt-6 flex flex-wrap items-center gap-2">
                     <button
                         v-for="o in types_offre"
                         :key="o.value"
@@ -99,6 +107,9 @@ const champ = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border
                     >
                         {{ o.label }}
                     </button>
+                    <a href="#resultats" class="rounded-full bg-accent-500 px-4 py-1.5 text-sm font-bold text-brand-950 hover:bg-accent-400">
+                        Explorer les annonces →
+                    </a>
                 </div>
             </div>
         </section>
@@ -108,66 +119,72 @@ const champ = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border
                 <li v-for="e in erreurs" :key="e">{{ e }}</li>
             </ul>
 
-            <!-- Carte de recherche -->
-            <form
-                class="space-y-4 rounded-2xl bg-white p-4 shadow-xl ring-1 ring-black/5 sm:p-6"
-                @submit.prevent="appliquer"
-            >
-                <p class="text-lg font-bold text-gray-900">Trouver le bon bien</p>
+            <!-- Barre de recherche qui chevauche le bandeau -->
+            <form class="rounded-2xl bg-white p-4 shadow-xl ring-1 ring-black/5 sm:p-5" @submit.prevent="appliquer">
+                <div class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1fr_1.4fr_1fr_auto] lg:items-center lg:gap-0">
+                    <label class="block lg:border-r lg:border-gray-200 lg:px-4">
+                        <span class="mb-1 block text-xs font-medium text-gray-500">Type de bien</span>
+                        <select v-model="form.type_bien" :class="champ">
+                            <option value="">Tous les types</option>
+                            <option v-for="t in types_bien" :key="t.value" :value="t.value">{{ t.label }}</option>
+                        </select>
+                    </label>
 
-                <input
-                    v-model="form.q"
-                    type="search"
-                    placeholder="Rechercher (ex. villa, studio, clôturé)"
-                    :class="champ"
-                />
+                    <label class="block lg:border-r lg:border-gray-200 lg:px-4">
+                        <span class="mb-1 block text-xs font-medium text-gray-500">Localisation</span>
+                        <select v-model="form.ville_id" :class="champ" @change="form.quartier_id = ''">
+                            <option value="">Toutes les villes</option>
+                            <option v-for="v in villes" :key="v.id" :value="v.id">{{ v.nom }}</option>
+                        </select>
+                    </label>
 
-                <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-                    <select v-model="form.type_bien" :class="champ">
-                        <option value="">Tous les biens</option>
-                        <option v-for="t in types_bien" :key="t.value" :value="t.value">{{ t.label }}</option>
-                    </select>
+                    <div class="lg:border-r lg:border-gray-200 lg:px-4">
+                        <span class="mb-1 block text-xs font-medium text-gray-500">Budget (FCFA)</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input v-model="form.prix_min" type="number" min="0" inputmode="numeric" placeholder="Min" :class="champ" />
+                            <input v-model="form.prix_max" type="number" min="0" inputmode="numeric" placeholder="Max" :class="champ" />
+                        </div>
+                    </div>
 
-                    <select v-model="form.ville_id" :class="champ" @change="form.quartier_id = ''">
-                        <option value="">Toutes les villes</option>
-                        <option v-for="v in villes" :key="v.id" :value="v.id">{{ v.nom }}</option>
-                    </select>
+                    <label class="block lg:px-4">
+                        <span class="mb-1 block text-xs font-medium text-gray-500">Chambres</span>
+                        <select v-model="form.chambres_min" :class="champ">
+                            <option value="">Indifférent</option>
+                            <option value="1">1 et plus</option>
+                            <option value="2">2 et plus</option>
+                            <option value="3">3 et plus</option>
+                            <option value="4">4 et plus</option>
+                        </select>
+                    </label>
 
-                    <select v-model="form.quartier_id" :class="champ" :disabled="quartiers.length === 0">
-                        <option value="">Tous les quartiers</option>
-                        <option v-for="q in quartiers" :key="q.id" :value="q.id">{{ q.nom }}</option>
-                    </select>
-
-                    <select v-model="form.tri" :class="champ">
-                        <option value="recent">Plus récentes</option>
-                        <option value="prix_asc">Prix croissant</option>
-                        <option value="prix_desc">Prix décroissant</option>
-                    </select>
-
-                    <input v-model="form.prix_min" type="number" min="0" inputmode="numeric" placeholder="Prix min (FCFA)" :class="champ" />
-                    <input v-model="form.prix_max" type="number" min="0" inputmode="numeric" placeholder="Prix max (FCFA)" :class="champ" />
-
-                    <button class="col-span-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-700">
+                    <button class="rounded-xl bg-brand-800 px-6 py-3 text-sm font-bold text-white hover:bg-brand-900 lg:ml-2">
                         Rechercher
                     </button>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2">
-                    <button
-                        v-for="t in types_bien"
-                        :key="t.value"
-                        type="button"
-                        class="rounded-full border px-3 py-1 text-sm font-medium transition"
-                        :class="form.type_bien === t.value
-                            ? 'border-brand-600 bg-brand-600 text-white'
-                            : 'border-gray-300 text-gray-700 hover:border-brand-500 hover:text-brand-700'"
-                        @click="choisirBien(t.value)"
-                    >
-                        {{ t.label }}
+                <div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3 text-sm">
+                    <button type="button" class="font-semibold text-brand-700" @click="plus = !plus">
+                        {{ plus ? '− Moins de filtres' : '+ Plus de filtres' }}
                     </button>
-                    <button type="button" class="ms-auto text-sm text-gray-500 underline" @click="reinitialiser">
-                        Effacer les filtres
-                    </button>
+                    <button type="button" class="text-gray-500 underline" @click="reinitialiser">Effacer les filtres</button>
+                </div>
+
+                <div v-if="plus" class="mt-3 grid gap-3 sm:grid-cols-3">
+                    <input
+                        v-model="form.q"
+                        type="search"
+                        placeholder="Mot-clé (ex. villa, clôturé)"
+                        :class="champBordure"
+                    />
+                    <select v-model="form.quartier_id" :class="champBordure" :disabled="quartiers.length === 0">
+                        <option value="">Tous les quartiers</option>
+                        <option v-for="q in quartiers" :key="q.id" :value="q.id">{{ q.nom }}</option>
+                    </select>
+                    <select v-model="form.tri" :class="champBordure">
+                        <option value="recent">Plus récentes</option>
+                        <option value="prix_asc">Prix croissant</option>
+                        <option value="prix_desc">Prix décroissant</option>
+                    </select>
                 </div>
             </form>
 
@@ -207,9 +224,9 @@ const champ = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border
             </div>
 
             <!-- Résultats -->
-            <div class="flex items-end justify-between">
+            <div id="resultats" class="flex items-end justify-between pt-2">
                 <h2 class="text-xl font-bold text-gray-900">
-                    {{ aDesCriteres ? 'Résultats' : 'Dernières annonces' }}
+                    {{ filtresActifs ? 'Résultats' : 'Dernières annonces' }}
                 </h2>
                 <p class="text-sm text-gray-500">{{ pluriel(annonces.total, 'annonce') }}</p>
             </div>
@@ -237,7 +254,7 @@ const champ = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border
 
                         <span
                             class="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold text-white"
-                            :class="a.type_offre === 'À vendre' ? 'bg-accent-500' : 'bg-brand-600'"
+                            :class="a.type_offre === 'À vendre' ? 'bg-accent-500 !text-brand-950' : 'bg-brand-600'"
                         >
                             {{ a.type_offre }}
                         </span>
