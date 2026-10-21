@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Annonce;
 use App\Models\Quartier;
 use App\Models\Ville;
 use Illuminate\Http\RedirectResponse;
@@ -81,6 +82,13 @@ class LocalisationController extends Controller
 
     public function destroyQuartier(Quartier $quartier): RedirectResponse
     {
+        // Annonces supprimées comprises : leurs lignes existent toujours en base
+        if (Annonce::withTrashed()->where('quartier_id', $quartier->id)->exists()) {
+            throw ValidationException::withMessages([
+                'quartier' => 'Ce quartier est utilisé par des annonces : il ne peut pas être supprimé.',
+            ]);
+        }
+
         $quartier->delete();
 
         return back();

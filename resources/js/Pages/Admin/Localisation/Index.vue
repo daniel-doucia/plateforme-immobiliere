@@ -23,7 +23,7 @@ const supprimerVille = (ville) => {
 
 const supprimerQuartier = (quartier) => {
     if (confirm(`Supprimer le quartier « ${quartier.nom} » ?`)) {
-        router.delete(route('admin.quartiers.destroy', quartier.id), { preserveScroll: true });
+        router.delete(route('admin.quartiers.destroy', quartier.id), { preserveScroll: true, onError: (e) => alert(e.quartier) });
     }
 };
 
