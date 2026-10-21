@@ -50,7 +50,7 @@ const date = (iso) => (iso ? new Date(iso).toLocaleDateString('fr-FR') : '');
                         :key="o.valeur"
                         :href="route('admin.verifications.index', { statut: o.valeur })"
                         class="rounded-full px-4 py-1 text-sm"
-                        :class="statut === o.valeur ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 shadow'"
+                        :class="statut === o.valeur ? 'bg-brand-600 text-white' : 'bg-white text-gray-700 shadow'"
                     >
                         {{ o.texte }}
                     </Link>
@@ -115,9 +115,9 @@ const date = (iso) => (iso ? new Date(iso).toLocaleDateString('fr-FR') : '');
                 </div>
 
                 <div class="flex justify-between text-sm">
-                    <Link v-if="profils.prev_page_url" :href="profils.prev_page_url" class="text-indigo-600">← Précédent</Link>
+                    <Link v-if="profils.prev_page_url" :href="profils.prev_page_url" class="text-brand-600">← Précédent</Link>
                     <span v-else />
-                    <Link v-if="profils.next_page_url" :href="profils.next_page_url" class="text-indigo-600">Suivant →</Link>
+                    <Link v-if="profils.next_page_url" :href="profils.next_page_url" class="text-brand-600">Suivant →</Link>
                 </div>
             </div>
         </div>

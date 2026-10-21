@@ -36,7 +36,7 @@ const retirer = (favori) => {
                                     <div v-else class="flex h-full items-center justify-center text-sm text-gray-500">Pas de photo</div>
                                 </div>
                                 <div class="space-y-1 p-4">
-                                    <p class="text-xs font-semibold uppercase text-indigo-600">{{ f.type_offre }} · {{ f.type_bien }}</p>
+                                    <p class="text-xs font-semibold uppercase text-brand-600">{{ f.type_offre }} · {{ f.type_bien }}</p>
                                     <p class="font-semibold text-gray-900">{{ f.titre }}</p>
                                     <p class="text-sm text-gray-600">{{ f.lieu }}</p>
                                     <p class="font-bold text-gray-900">
@@ -58,9 +58,9 @@ const retirer = (favori) => {
                 </div>
 
                 <div class="flex justify-between text-sm">
-                    <Link v-if="favoris.prev_page_url" :href="favoris.prev_page_url" class="text-indigo-600">← Précédent</Link>
+                    <Link v-if="favoris.prev_page_url" :href="favoris.prev_page_url" class="text-brand-600">← Précédent</Link>
                     <span v-else />
-                    <Link v-if="favoris.next_page_url" :href="favoris.next_page_url" class="text-indigo-600">Suivant →</Link>
+                    <Link v-if="favoris.next_page_url" :href="favoris.next_page_url" class="text-brand-600">Suivant →</Link>
                 </div>
             </div>
         </div>

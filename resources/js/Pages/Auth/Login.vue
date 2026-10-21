@@ -76,7 +76,7 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
                 >
                     Mot de passe oublié ?
                 </Link>
@@ -88,7 +88,7 @@ const submit = () => {
 
             <p class="mt-6 text-center text-sm text-gray-600">
                 Pas encore de compte ?
-                <Link :href="route('register')" class="font-semibold text-indigo-600 underline">Créer un compte</Link>
+                <Link :href="route('register')" class="font-semibold text-brand-600 underline">Créer un compte</Link>
             </p>
         </form>
     </GuestLayout>

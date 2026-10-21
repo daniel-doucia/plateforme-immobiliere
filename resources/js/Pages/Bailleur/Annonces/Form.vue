@@ -41,7 +41,7 @@ const submit = () => {
     }
 };
 
-const champ = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
+const champ = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500';
 </script>
 
 <template>

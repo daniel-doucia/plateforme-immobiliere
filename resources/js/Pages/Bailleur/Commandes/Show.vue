@@ -52,7 +52,7 @@ const couleurs = {
                     Le paiement a échoué. Vous pouvez recommencer depuis « Mes annonces ».
                 </p>
 
-                <Link :href="route('bailleur.annonces.index')" class="text-sm text-indigo-600 underline">
+                <Link :href="route('bailleur.annonces.index')" class="text-sm text-brand-600 underline">
                     ← Retour à mes annonces
                 </Link>
             </div>

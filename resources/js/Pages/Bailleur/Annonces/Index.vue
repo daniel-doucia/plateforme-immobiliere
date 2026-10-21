@@ -44,7 +44,7 @@ const supprimer = (id) => {
                 <div v-if="peut_creer">
                     <Link
                         :href="route('bailleur.annonces.create')"
-                        class="inline-block rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
+                        class="inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white"
                     >
                         + Nouvelle annonce
                     </Link>
@@ -112,7 +112,7 @@ const supprimer = (id) => {
                         </button>
                         <button
                             v-if="a.peut.renouveler"
-                            class="rounded-md bg-indigo-600 px-3 py-1 text-sm text-white"
+                            class="rounded-md bg-brand-600 px-3 py-1 text-sm text-white"
                             @click="action('bailleur.annonces.renouveler', a.id)"
                         >
                             Renouveler
@@ -138,9 +138,9 @@ const supprimer = (id) => {
                 </div>
 
                 <div class="flex justify-between text-sm">
-                    <Link v-if="annonces.prev_page_url" :href="annonces.prev_page_url" class="text-indigo-600">← Précédent</Link>
+                    <Link v-if="annonces.prev_page_url" :href="annonces.prev_page_url" class="text-brand-600">← Précédent</Link>
                     <span v-else />
-                    <Link v-if="annonces.next_page_url" :href="annonces.next_page_url" class="text-indigo-600">Suivant →</Link>
+                    <Link v-if="annonces.next_page_url" :href="annonces.next_page_url" class="text-brand-600">Suivant →</Link>
                 </div>
             </div>
         </div>

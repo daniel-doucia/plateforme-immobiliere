@@ -36,7 +36,7 @@ const submit = () => form.post(route('bailleur.commandes.store', props.annonce.i
                         v-for="f in forfaits"
                         :key="f.id"
                         class="flex cursor-pointer items-center justify-between rounded-lg border bg-white p-4 shadow-sm"
-                        :class="form.forfait_id === f.id ? 'border-indigo-600 ring-1 ring-indigo-600' : 'border-gray-200'"
+                        :class="form.forfait_id === f.id ? 'border-brand-600 ring-1 ring-brand-600' : 'border-gray-200'"
                     >
                         <span>
                             <span class="block font-semibold">{{ f.nom }}</span>
@@ -44,7 +44,7 @@ const submit = () => form.post(route('bailleur.commandes.store', props.annonce.i
                         </span>
                         <span class="flex items-center gap-3">
                             <span class="font-semibold">{{ prix(f.prix) }}</span>
-                            <input type="radio" :value="f.id" v-model="form.forfait_id" class="text-indigo-600" />
+                            <input type="radio" :value="f.id" v-model="form.forfait_id" class="text-brand-600" />
                         </span>
                     </label>
                     <InputError :message="form.errors.forfait_id" />

@@ -36,7 +36,7 @@ const envoyer = () =>
             />
             <InputError class="mt-1" :message="form.errors.arrondissement" />
         </div>
-        <button class="rounded-md bg-indigo-600 px-3 py-2 text-sm text-white" :disabled="form.processing">
+        <button class="rounded-md bg-brand-600 px-3 py-2 text-sm text-white" :disabled="form.processing">
             Ajouter
         </button>
     </form>

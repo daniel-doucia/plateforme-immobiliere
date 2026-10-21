@@ -32,14 +32,14 @@ const submit = () => {
                 <div class="mt-2 grid grid-cols-2 gap-3">
                     <label
                         class="cursor-pointer rounded-lg border p-3 text-center text-sm"
-                        :class="form.type_compte === 'client' ? 'border-indigo-600 bg-indigo-50 font-semibold' : 'border-gray-300'"
+                        :class="form.type_compte === 'client' ? 'border-brand-600 bg-brand-50 font-semibold' : 'border-gray-300'"
                     >
                         <input type="radio" value="client" v-model="form.type_compte" class="sr-only" />
                         Client<br /><span class="text-xs font-normal text-gray-500">Je cherche un bien</span>
                     </label>
                     <label
                         class="cursor-pointer rounded-lg border p-3 text-center text-sm"
-                        :class="form.type_compte === 'bailleur' ? 'border-indigo-600 bg-indigo-50 font-semibold' : 'border-gray-300'"
+                        :class="form.type_compte === 'bailleur' ? 'border-brand-600 bg-brand-50 font-semibold' : 'border-gray-300'"
                     >
                         <input type="radio" value="bailleur" v-model="form.type_compte" class="sr-only" />
                         Bailleur<br /><span class="text-xs font-normal text-gray-500">Je publie des annonces</span>
@@ -118,7 +118,7 @@ const submit = () => {
             <div class="mt-4 flex items-center justify-end">
                 <Link
                     :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
                 >
                     Déjà inscrit ?
                 </Link>

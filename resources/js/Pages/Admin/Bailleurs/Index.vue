@@ -49,7 +49,7 @@ const compteurs = (s) => [
                         placeholder="Nom, e-mail ou téléphone"
                         class="block w-full rounded-md border-gray-300 text-sm"
                     />
-                    <button class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">Chercher</button>
+                    <button class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Chercher</button>
                 </form>
 
                 <p v-if="bailleurs.data.length === 0" class="rounded-lg bg-white p-6 text-center text-gray-500 shadow">
@@ -83,9 +83,9 @@ const compteurs = (s) => [
                 </div>
 
                 <div class="flex justify-between text-sm">
-                    <Link v-if="bailleurs.prev_page_url" :href="bailleurs.prev_page_url" class="text-indigo-600">← Précédent</Link>
+                    <Link v-if="bailleurs.prev_page_url" :href="bailleurs.prev_page_url" class="text-brand-600">← Précédent</Link>
                     <span v-else />
-                    <Link v-if="bailleurs.next_page_url" :href="bailleurs.next_page_url" class="text-indigo-600">Suivant →</Link>
+                    <Link v-if="bailleurs.next_page_url" :href="bailleurs.next_page_url" class="text-brand-600">Suivant →</Link>
                 </div>
             </div>
         </div>

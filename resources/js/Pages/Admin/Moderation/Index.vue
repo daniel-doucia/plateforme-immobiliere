@@ -129,9 +129,9 @@ const detail = (a) =>
                 </div>
 
                 <div class="flex justify-between text-sm">
-                    <Link v-if="annonces.prev_page_url" :href="annonces.prev_page_url" class="text-indigo-600">← Précédent</Link>
+                    <Link v-if="annonces.prev_page_url" :href="annonces.prev_page_url" class="text-brand-600">← Précédent</Link>
                     <span v-else />
-                    <Link v-if="annonces.next_page_url" :href="annonces.next_page_url" class="text-indigo-600">Suivant →</Link>
+                    <Link v-if="annonces.next_page_url" :href="annonces.next_page_url" class="text-brand-600">Suivant →</Link>
                 </div>
             </div>
         </div>

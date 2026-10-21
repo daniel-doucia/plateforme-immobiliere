@@ -52,7 +52,7 @@ const supprimer = (alerte) => {
                     </div>
                     <p class="text-xs text-gray-500">Créée le {{ date(a.creee_le) }}</p>
                     <div class="flex gap-3 text-sm">
-                        <button class="text-indigo-600" @click="basculer(a)">{{ a.actif ? 'Mettre en pause' : 'Réactiver' }}</button>
+                        <button class="text-brand-600" @click="basculer(a)">{{ a.actif ? 'Mettre en pause' : 'Réactiver' }}</button>
                         <button class="text-red-600" @click="supprimer(a)">Supprimer</button>
                     </div>
                 </div>

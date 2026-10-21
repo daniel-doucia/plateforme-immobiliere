@@ -56,23 +56,23 @@ const prix = (n) => new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
 
                     <Link :href="route('admin.bailleurs.index')" class="rounded-lg bg-white p-6 shadow hover:bg-gray-50">
                         <p class="font-semibold">Bailleurs et leurs annonces</p>
-                        <p class="mt-1 text-sm text-indigo-600">Voir les compteurs par bailleur →</p>
+                        <p class="mt-1 text-sm text-brand-600">Voir les compteurs par bailleur →</p>
                     </Link>
 
                     <Link :href="route('admin.forfaits.index')" class="rounded-lg bg-white p-6 shadow hover:bg-gray-50">
                         <p class="font-semibold">Tarifs des forfaits</p>
-                        <p class="mt-1 text-sm text-indigo-600">Modifier les prix et les durées →</p>
+                        <p class="mt-1 text-sm text-brand-600">Modifier les prix et les durées →</p>
                     </Link>
 
                     <Link :href="route('admin.verifications.index')" class="rounded-lg bg-white p-6 shadow hover:bg-gray-50">
                         <p class="text-sm text-gray-500">Bailleurs en attente de vérification</p>
                         <p class="text-3xl font-bold">{{ stats.bailleurs_en_attente }}</p>
-                        <p class="mt-1 text-sm text-indigo-600">Vérifier les dossiers →</p>
+                        <p class="mt-1 text-sm text-brand-600">Vérifier les dossiers →</p>
                     </Link>
 
                     <Link :href="route('admin.localisation.index')" class="rounded-lg bg-white p-6 shadow hover:bg-gray-50">
                         <p class="font-semibold">Villes et quartiers</p>
-                        <p class="mt-1 text-sm text-indigo-600">Gérer la localisation →</p>
+                        <p class="mt-1 text-sm text-brand-600">Gérer la localisation →</p>
                     </Link>
                 </div>
             </div>

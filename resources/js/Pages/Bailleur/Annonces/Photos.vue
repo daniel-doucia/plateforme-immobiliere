@@ -100,13 +100,13 @@ const mettreEnPremiere = (photo) =>
                             <img :src="p.url" alt="" loading="lazy" class="h-36 w-full object-cover" />
                             <span
                                 v-if="i === 0"
-                                class="absolute left-2 top-2 rounded bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white"
+                                class="absolute left-2 top-2 rounded bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white"
                             >
                                 Principale
                             </span>
                         </div>
                         <div v-if="peut_modifier" class="flex items-center justify-between p-2 text-xs">
-                            <button v-if="i > 0" class="text-indigo-600" @click="mettreEnPremiere(p)">
+                            <button v-if="i > 0" class="text-brand-600" @click="mettreEnPremiere(p)">
                                 Mettre en première
                             </button>
                             <span v-else />
@@ -148,7 +148,7 @@ const mettreEnPremiere = (photo) =>
                     « Mes annonces » pour la rouvrir.
                 </p>
 
-                <Link :href="route('bailleur.annonces.index')" class="text-sm text-indigo-600 underline">
+                <Link :href="route('bailleur.annonces.index')" class="text-sm text-brand-600 underline">
                     ← Retour à mes annonces
                 </Link>
             </div>

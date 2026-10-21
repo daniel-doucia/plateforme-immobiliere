@@ -44,7 +44,7 @@ const basculerFavori = () => {
 
     <PublicLayout>
         <div class="mx-auto max-w-3xl space-y-4 px-4 py-6">
-            <Link :href="route('annonces.index')" class="text-sm text-indigo-600">← Toutes les annonces</Link>
+            <Link :href="route('annonces.index')" class="text-sm text-brand-600">← Toutes les annonces</Link>
 
             <p v-if="$page.props.errors.favori" class="rounded-lg bg-red-100 p-3 text-sm text-red-800">
                 {{ $page.props.errors.favori }}
@@ -69,7 +69,7 @@ const basculerFavori = () => {
                             alt=""
                             loading="lazy"
                             class="h-16 w-20 rounded object-cover"
-                            :class="i === courante ? 'ring-2 ring-indigo-600' : 'opacity-70'"
+                            :class="i === courante ? 'ring-2 ring-brand-600' : 'opacity-70'"
                         />
                     </button>
                 </div>
@@ -79,7 +79,7 @@ const basculerFavori = () => {
             </div>
 
             <div class="space-y-3 rounded-lg bg-white p-6 shadow">
-                <p class="text-xs font-semibold uppercase text-indigo-600">{{ annonce.type_offre }} · {{ annonce.type_bien }}</p>
+                <p class="text-xs font-semibold uppercase text-brand-600">{{ annonce.type_offre }} · {{ annonce.type_bien }}</p>
                 <h1 class="text-2xl font-bold text-gray-900">{{ annonce.titre }}</h1>
                 <p class="text-gray-600">{{ annonce.lieu }}</p>
                 <p v-if="annonce.adresse_indicative" class="text-sm text-gray-500">Repère : {{ annonce.adresse_indicative }}</p>
@@ -109,7 +109,7 @@ const basculerFavori = () => {
                     >
                         {{ est_favori ? '★ Retirer des favoris' : '☆ Ajouter aux favoris' }}
                     </button>
-                    <Link v-else :href="route('login')" class="text-sm font-semibold text-indigo-600 underline">
+                    <Link v-else :href="route('login')" class="text-sm font-semibold text-brand-600 underline">
                         Connectez-vous pour ajouter aux favoris
                     </Link>
                 </div>
@@ -120,7 +120,7 @@ const basculerFavori = () => {
                 <p class="text-sm text-gray-600">{{ bailleur.nom }}</p>
 
                 <div v-if="contact" class="flex flex-wrap gap-3">
-                    <a :href="`tel:${contact.telephone}`" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">
+                    <a :href="`tel:${contact.telephone}`" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">
                         Appeler {{ contact.telephone }}
                     </a>
                     <a
@@ -136,9 +136,9 @@ const basculerFavori = () => {
                 <p v-else-if="peut_voir_contact" class="text-sm text-gray-500">Le contact n'est pas disponible.</p>
 
                 <p v-else class="text-sm text-gray-600">
-                    <Link :href="route('login')" class="font-semibold text-indigo-600 underline">Connectez-vous</Link>
+                    <Link :href="route('login')" class="font-semibold text-brand-600 underline">Connectez-vous</Link>
                     ou
-                    <Link :href="route('register')" class="font-semibold text-indigo-600 underline">créez un compte</Link>
+                    <Link :href="route('register')" class="font-semibold text-brand-600 underline">créez un compte</Link>
                     gratuitement pour voir le numéro du bailleur.
                 </p>
             </div>
