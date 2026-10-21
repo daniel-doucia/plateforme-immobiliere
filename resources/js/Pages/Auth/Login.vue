@@ -1,10 +1,8 @@
 <script setup>
 import Checkbox from '@/Components/Checkbox.vue';
+import ChampAuth from '@/Components/ChampAuth.vue';
+import Icone from '@/Components/Icone.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 defineProps({
@@ -29,66 +27,60 @@ const submit = () => {
     <GuestLayout>
         <Head title="Connexion" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div v-if="status" class="mb-4 rounded-lg bg-green-50 p-3 text-sm font-medium text-green-700">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="E-mail" />
+        <form class="space-y-5" @submit.prevent="submit">
+            <ChampAuth
+                id="email"
+                v-model="form.email"
+                label="E-mail"
+                type="email"
+                icone="mail"
+                placeholder="vous@exemple.com"
+                autocomplete="username"
+                required
+                autofocus
+                :erreur="form.errors.email"
+            />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+            <ChampAuth
+                id="password"
+                v-model="form.password"
+                label="Mot de passe"
+                type="password"
+                icone="cadenas"
+                placeholder="Votre mot de passe"
+                autocomplete="current-password"
+                required
+                :erreur="form.errors.password"
+            />
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Mot de passe" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
+            <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center gap-2 text-gray-600">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Se souvenir de moi</span>
+                    Se souvenir de moi
                 </label>
-            </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
-                >
+                <Link v-if="canResetPassword" :href="route('password.request')" class="font-medium text-brand-700 hover:underline">
                     Mot de passe oublié ?
                 </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Se connecter
-                </PrimaryButton>
             </div>
 
-            <p class="mt-6 text-center text-sm text-gray-600">
+            <button
+                class="flex w-full items-center justify-between rounded-full bg-brand-700 py-2 pl-6 pr-2 font-semibold text-white transition hover:bg-brand-800 disabled:opacity-50"
+                :disabled="form.processing"
+            >
+                Se connecter
+                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-accent-500 text-brand-950">
+                    <Icone nom="fleche" />
+                </span>
+            </button>
+
+            <p class="text-center text-sm text-gray-600">
                 Pas encore de compte ?
-                <Link :href="route('register')" class="font-semibold text-brand-600 underline">Créer un compte</Link>
+                <Link :href="route('register')" class="font-semibold text-brand-700 hover:underline">Créer un compte</Link>
             </p>
         </form>
     </GuestLayout>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Bailleur\AnnonceController;
 use App\Http\Controllers\Bailleur\CommandeController;
 use App\Http\Controllers\Bailleur\PhotoController;
 use App\Http\Controllers\Bailleur\ProfilController;
+use App\Http\Controllers\Bailleur\RecapitulatifController;
 use App\Http\Controllers\Bailleur\RenouvellementController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,8 @@ Route::middleware(['auth', 'verified', 'role:bailleur'])
         Route::post('/annonces/{annonce}/cloturer', [AnnonceController::class, 'cloturer'])->name('annonces.cloturer');
         Route::post('/annonces/{annonce}/renouveler', RenouvellementController::class)->name('annonces.renouveler');
         Route::delete('/annonces/{annonce}', [AnnonceController::class, 'destroy'])->name('annonces.destroy');
+
+        Route::get('/annonces/{annonce}/recapitulatif', RecapitulatifController::class)->name('annonces.recapitulatif');
 
         Route::get('/annonces/{annonce}/photos', [PhotoController::class, 'index'])->name('annonces.photos.index');
         Route::post('/annonces/{annonce}/photos', [PhotoController::class, 'store'])->name('annonces.photos.store');

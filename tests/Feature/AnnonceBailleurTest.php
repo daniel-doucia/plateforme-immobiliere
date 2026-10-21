@@ -85,7 +85,7 @@ test('un bailleur vérifié crée un brouillon et ne peut pas imposer le statut 
     $this->actingAs($bailleur)->post(route('bailleur.annonces.store'), donneesAnnonce([
         'statut' => 'publiee',
         'user_id' => 999999,
-    ]))->assertRedirect(route('bailleur.annonces.index'));
+    ]))->assertRedirectContains('/photos');
 
     $annonce = Annonce::first();
 
@@ -136,7 +136,7 @@ test('un bailleur modifie son brouillon', function () {
 
     $this->actingAs($bailleur)
         ->put(route('bailleur.annonces.update', $annonce), donneesAnnonce(['prix' => 200000]))
-        ->assertRedirect(route('bailleur.annonces.index'));
+        ->assertRedirectContains('/photos');
 
     expect($annonce->fresh()->prix)->toBe(200000);
 });

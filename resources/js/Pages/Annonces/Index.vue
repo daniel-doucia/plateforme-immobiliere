@@ -13,7 +13,7 @@ const props = defineProps({
 
 const page = usePage();
 const form = reactive({ ...props.filtres });
-const plus = ref(Boolean(props.filtres.q || props.filtres.quartier_id || props.filtres.tri !== 'recent'));
+const plus = ref(Boolean(props.filtres.q || props.filtres.tri !== 'recent'));
 
 const quartiers = computed(
     () => props.villes.find((v) => v.id === Number(form.ville_id))?.quartiers ?? [],
@@ -67,11 +67,26 @@ const choisirOffre = (valeur) => {
     appliquer();
 };
 
+const choisirBien = (valeur) => {
+    form.type_bien = valeur === '' || form.type_bien === valeur ? '' : valeur;
+
+    // Un terrain n'a pas de chambres : on retire ce critère pour ne pas masquer tous les terrains
+    if (form.type_bien === 'terrain') {
+        form.chambres_min = '';
+    }
+
+    appliquer();
+};
+
 const creerAlerte = () => router.post(route('alertes.store'), criteres.value, { preserveScroll: true });
 
 const champ =
-    'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-brand-500 focus:ring-brand-500 lg:border-0 lg:bg-transparent lg:p-0 lg:font-semibold lg:focus:ring-0';
-const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-brand-500 focus:ring-brand-500';
+    'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus:border-brand-500 focus:ring-brand-500 disabled:opacity-50';
+
+const pastille = (actif) =>
+    actif
+        ? 'border-brand-700 bg-brand-700 text-white'
+        : 'border-gray-300 text-gray-700 hover:border-brand-500 hover:text-brand-700';
 </script>
 
 <template>
@@ -83,7 +98,7 @@ const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus
             class="relative overflow-hidden bg-brand-900"
             style="background-image: url('/images/hero-n-djamena.jpg'); background-size: cover; background-position: 72% center;"
         >
-            <div class="absolute inset-0 bg-gradient-to-r from-brand-950/90 via-brand-900/70 to-brand-800/25"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-950/85 via-brand-900/55 to-brand-800/10"></div>
 
             <div class="relative mx-auto max-w-6xl px-4 pb-28 pt-10 sm:pb-32 sm:pt-14">
                 <p class="text-sm font-semibold uppercase tracking-wide text-accent-400">Immobilier au Tchad</p>
@@ -102,7 +117,7 @@ const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus
                         class="rounded-full border px-4 py-1.5 text-sm font-semibold transition"
                         :class="form.type_offre === o.value
                             ? 'border-white bg-white text-brand-800'
-                            : 'border-white/40 text-white hover:bg-white/10'"
+                            : 'border-white/50 text-white hover:bg-white/10'"
                         @click="choisirOffre(o.value)"
                     >
                         {{ o.label }}
@@ -120,25 +135,48 @@ const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus
             </ul>
 
             <!-- Barre de recherche qui chevauche le bandeau -->
-            <form class="rounded-2xl bg-white p-4 shadow-xl ring-1 ring-black/5 sm:p-5" @submit.prevent="appliquer">
-                <div class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1fr_1.4fr_1fr_auto] lg:items-center lg:gap-0">
-                    <label class="block lg:border-r lg:border-gray-200 lg:px-4">
-                        <span class="mb-1 block text-xs font-medium text-gray-500">Type de bien</span>
-                        <select v-model="form.type_bien" :class="champ">
-                            <option value="">Tous les types</option>
-                            <option v-for="t in types_bien" :key="t.value" :value="t.value">{{ t.label }}</option>
-                        </select>
-                    </label>
+            <form class="space-y-4 rounded-2xl bg-white p-4 shadow-xl ring-1 ring-black/5 sm:p-5" @submit.prevent="appliquer">
+                <!-- Type de bien -->
+                <div class="flex gap-2 overflow-x-auto pb-1">
+                    <button
+                        type="button"
+                        class="shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold transition"
+                        :class="pastille(form.type_bien === '')"
+                        @click="choisirBien('')"
+                    >
+                        Tous les biens
+                    </button>
+                    <button
+                        v-for="t in types_bien"
+                        :key="t.value"
+                        type="button"
+                        class="shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold transition"
+                        :class="pastille(form.type_bien === t.value)"
+                        @click="choisirBien(t.value)"
+                    >
+                        {{ t.label }}
+                    </button>
+                </div>
 
-                    <label class="block lg:border-r lg:border-gray-200 lg:px-4">
-                        <span class="mb-1 block text-xs font-medium text-gray-500">Localisation</span>
+                <!-- Lieu, budget, chambres -->
+                <div class="grid grid-cols-2 gap-3 lg:grid-cols-[1fr_1fr_1.3fr_1fr_auto] lg:items-end">
+                    <label class="block">
+                        <span class="mb-1 block text-xs font-medium text-gray-500">Ville</span>
                         <select v-model="form.ville_id" :class="champ" @change="form.quartier_id = ''">
                             <option value="">Toutes les villes</option>
                             <option v-for="v in villes" :key="v.id" :value="v.id">{{ v.nom }}</option>
                         </select>
                     </label>
 
-                    <div class="lg:border-r lg:border-gray-200 lg:px-4">
+                    <label class="block">
+                        <span class="mb-1 block text-xs font-medium text-gray-500">Quartier</span>
+                        <select v-model="form.quartier_id" :class="champ" :disabled="quartiers.length === 0">
+                            <option value="">{{ quartiers.length ? 'Tous les quartiers' : "Choisir d'abord une ville" }}</option>
+                            <option v-for="q in quartiers" :key="q.id" :value="q.id">{{ q.nom }}</option>
+                        </select>
+                    </label>
+
+                    <div class="col-span-2 lg:col-span-1">
                         <span class="mb-1 block text-xs font-medium text-gray-500">Budget (FCFA)</span>
                         <div class="grid grid-cols-2 gap-2">
                             <input v-model="form.prix_min" type="number" min="0" inputmode="numeric" placeholder="Min" :class="champ" />
@@ -146,9 +184,9 @@ const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus
                         </div>
                     </div>
 
-                    <label class="block lg:px-4">
+                    <label class="block">
                         <span class="mb-1 block text-xs font-medium text-gray-500">Chambres</span>
-                        <select v-model="form.chambres_min" :class="champ">
+                        <select v-model="form.chambres_min" :class="champ" :disabled="form.type_bien === 'terrain'">
                             <option value="">Indifférent</option>
                             <option value="1">1 et plus</option>
                             <option value="2">2 et plus</option>
@@ -157,30 +195,21 @@ const champBordure = 'w-full rounded-lg border-gray-200 bg-gray-50 text-sm focus
                         </select>
                     </label>
 
-                    <button class="rounded-xl bg-brand-800 px-6 py-3 text-sm font-bold text-white hover:bg-brand-900 lg:ml-2">
+                    <button class="col-span-2 rounded-xl bg-brand-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-900 lg:col-span-1">
                         Rechercher
                     </button>
                 </div>
 
-                <div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3 text-sm">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3 text-sm">
                     <button type="button" class="font-semibold text-brand-700" @click="plus = !plus">
-                        {{ plus ? '− Moins de filtres' : '+ Plus de filtres' }}
+                        {{ plus ? '− Moins de filtres' : '+ Mot-clé et tri' }}
                     </button>
                     <button type="button" class="text-gray-500 underline" @click="reinitialiser">Effacer les filtres</button>
                 </div>
 
-                <div v-if="plus" class="mt-3 grid gap-3 sm:grid-cols-3">
-                    <input
-                        v-model="form.q"
-                        type="search"
-                        placeholder="Mot-clé (ex. villa, clôturé)"
-                        :class="champBordure"
-                    />
-                    <select v-model="form.quartier_id" :class="champBordure" :disabled="quartiers.length === 0">
-                        <option value="">Tous les quartiers</option>
-                        <option v-for="q in quartiers" :key="q.id" :value="q.id">{{ q.nom }}</option>
-                    </select>
-                    <select v-model="form.tri" :class="champBordure">
+                <div v-if="plus" class="grid gap-3 sm:grid-cols-2">
+                    <input v-model="form.q" type="search" placeholder="Mot-clé (ex. villa, clôturé)" :class="champ" />
+                    <select v-model="form.tri" :class="champ">
                         <option value="recent">Plus récentes</option>
                         <option value="prix_asc">Prix croissant</option>
                         <option value="prix_desc">Prix décroissant</option>

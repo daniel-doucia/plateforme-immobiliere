@@ -46,7 +46,7 @@ class AnnonceController extends Controller
         $annonce->user_id = $request->user()->id; // jamais issu du formulaire
         $annonce->save();
 
-        return redirect()->route('bailleur.annonces.index');
+        return redirect()->route('bailleur.annonces.photos.index', $annonce);
     }
 
     public function edit(Annonce $annonce): Response
@@ -60,7 +60,7 @@ class AnnonceController extends Controller
     {
         $annonce->update($this->donneesValidees($request));
 
-        return redirect()->route('bailleur.annonces.index');
+        return redirect()->route('bailleur.annonces.photos.index', $annonce);
     }
 
     public function soumettre(Annonce $annonce): RedirectResponse

@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Etapes from '@/Components/Etapes.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -79,34 +80,41 @@ const mettreEnPremiere = (photo) =>
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">Photos de l'annonce</h2>
+            <p class="text-sm text-gray-500">{{ annonce.titre }} · {{ annonce.statut_libelle }}</p>
         </template>
 
-        <div class="py-8">
-            <div class="mx-auto max-w-3xl space-y-4 px-4 sm:px-6 lg:px-8">
-                <p class="text-sm text-gray-600">
-                    <span class="font-semibold">{{ annonce.titre }}</span> · {{ annonce.statut_libelle }}
-                </p>
-                <p class="text-sm text-gray-600">
-                    {{ photos.length }} / {{ max }} photos. La première est la photo principale.
-                </p>
+        <div class="px-4 py-6 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl space-y-5">
+                <Etapes :courante="3" />
 
-                <p v-if="photos.length === 0" class="rounded-lg bg-white p-6 text-center text-gray-500 shadow">
+                <div class="rounded-xl bg-brand-50 p-4 text-sm text-brand-900">
+                    <p class="font-semibold">Des photos qui donnent envie de vous appeler</p>
+                    <p class="mt-1">
+                        Prenez-les de jour, avec la lumière naturelle : la façade, chaque pièce, la douche, la cour.
+                        La première photo est celle qui s'affiche dans la liste : choisissez la meilleure.
+                        Évitez les photos floues, celles qui ne montrent pas le bien et celles où figure un numéro de téléphone.
+                    </p>
+                </div>
+
+                <p class="text-sm text-gray-600">{{ photos.length }} / {{ max }} photos</p>
+
+                <p v-if="photos.length === 0" class="rounded-xl bg-white p-6 text-center text-gray-500 shadow-sm ring-1 ring-black/5">
                     Aucune photo pour le moment.
                 </p>
 
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    <div v-for="(p, i) in photos" :key="p.id" class="overflow-hidden rounded-lg bg-white shadow">
+                    <div v-for="(p, i) in photos" :key="p.id" class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5">
                         <div class="relative">
                             <img :src="p.url" alt="" loading="lazy" class="h-36 w-full object-cover" />
                             <span
                                 v-if="i === 0"
-                                class="absolute left-2 top-2 rounded bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white"
+                                class="absolute left-2 top-2 rounded bg-accent-500 px-2 py-0.5 text-xs font-bold text-brand-950"
                             >
                                 Principale
                             </span>
                         </div>
                         <div v-if="peut_modifier" class="flex items-center justify-between p-2 text-xs">
-                            <button v-if="i > 0" class="text-brand-600" @click="mettreEnPremiere(p)">
+                            <button v-if="i > 0" class="font-medium text-brand-700" @click="mettreEnPremiere(p)">
                                 Mettre en première
                             </button>
                             <span v-else />
@@ -115,7 +123,7 @@ const mettreEnPremiere = (photo) =>
                     </div>
                 </div>
 
-                <form v-if="peut_modifier && restant > 0" class="space-y-3 rounded-lg bg-white p-5 shadow" @submit.prevent="envoyer">
+                <form v-if="peut_modifier && restant > 0" class="space-y-3 rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5" @submit.prevent="envoyer">
                     <p class="text-sm font-medium">Ajouter des photos ({{ restant }} possible{{ restant > 1 ? 's' : '' }})</p>
                     <input
                         ref="champFichier"
@@ -143,14 +151,20 @@ const mettreEnPremiere = (photo) =>
                 </form>
 
                 <p v-else-if="peut_modifier" class="text-sm text-gray-500">Le maximum de photos est atteint.</p>
-                <p v-else class="rounded-lg bg-yellow-50 p-4 text-sm text-yellow-800">
+                <p v-else class="rounded-xl bg-yellow-50 p-4 text-sm text-yellow-800">
                     Les photos ne se modifient que lorsque l'annonce est en brouillon. Utilisez « Corriger » dans
                     « Mes annonces » pour la rouvrir.
                 </p>
 
-                <Link :href="route('bailleur.annonces.index')" class="text-sm text-brand-600 underline">
-                    ← Retour à mes annonces
-                </Link>
+                <div class="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-4">
+                    <Link :href="route('bailleur.annonces.index')" class="text-sm text-gray-500 underline">← Mes annonces</Link>
+                    <Link
+                        :href="route('bailleur.annonces.recapitulatif', annonce.id)"
+                        class="rounded-full bg-brand-700 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-800"
+                    >
+                        Continuer vers le récapitulatif →
+                    </Link>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
