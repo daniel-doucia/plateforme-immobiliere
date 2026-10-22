@@ -129,7 +129,7 @@ const pastille = (actif) =>
             </div>
         </section>
 
-        <div class="mx-auto -mt-16 max-w-6xl space-y-6 px-4 pb-10 sm:-mt-20">
+        <div class="relative z-10 mx-auto -mt-16 max-w-6xl space-y-6 px-4 pb-10 sm:-mt-20">
             <ul v-if="erreurs.length" class="space-y-1 rounded-xl bg-red-100 p-3 text-sm text-red-800">
                 <li v-for="e in erreurs" :key="e">{{ e }}</li>
             </ul>
