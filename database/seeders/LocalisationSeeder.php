@@ -8,27 +8,38 @@ use Illuminate\Database\Seeder;
 
 class LocalisationSeeder extends Seeder
 {
+    private const CAPITALE = "N'Djaména";
+
+    /** Chefs-lieux de province et principales villes : l'administrateur peut en ajouter ou en retirer. */
+    private const VILLES = [
+        "N'Djaména",
+        'Abéché', 'Adré', 'Am Timan', 'Am-Djarass', 'Ati', 'Bardaï', 'Bébédja', 'Biltine', 'Bitkine', 'Bol', 'Bongor', 'Bousso',
+        'Doba', 'Fada', 'Faya-Largeau', 'Fianga', 'Goz Beïda', 'Kélo', 'Koumra', 'Laï', 'Léré', 'Mao', 'Massakory', 'Massenya',
+        'Moundou', 'Mongo', 'Moussoro', 'Oum Hadjer', 'Pala', 'Sarh',
+    ];
+
+    private const QUARTIERS_CAPITALE = [
+        'Moursal', 'Farcha', 'Chagoua', 'Diguel', 'Klemat',
+        'Walia', 'Dembé', 'Amriguébé', 'Ambassatna', 'Gassi',
+    ];
+
     public function run(): void
     {
-        $villes = [
-            "N'Djaména", 'Moundou', 'Sarh', 'Abéché', 'Doba', 'Bongor',
-            'Pala', 'Kélo', 'Mongo', 'Koumra', 'Am Timan', 'Ati',
-        ];
+        foreach (self::VILLES as $nom) {
+            $ville = Ville::firstOrCreate(['nom' => $nom]);
 
-        foreach ($villes as $nom) {
-            Ville::firstOrCreate(['nom' => $nom]);
-        }
+            if ($nom === self::CAPITALE) {
+                foreach (self::QUARTIERS_CAPITALE as $quartier) {
+                    Quartier::firstOrCreate(['ville_id' => $ville->id, 'nom' => $quartier]);
+                }
 
-        // Quartiers de départ pour N'Djaména (arrondissements à compléter par l'admin)
-        $ndjamena = Ville::where('nom', "N'Djaména")->firstOrFail();
+                continue;
+            }
 
-        $quartiers = [
-            'Moursal', 'Farcha', 'Chagoua', 'Diguel', 'Klemat',
-            'Walia', 'Dembé', 'Amriguébé', 'Ambassatna', 'Gassi',
-        ];
-
-        foreach ($quartiers as $nom) {
-            Quartier::firstOrCreate(['ville_id' => $ndjamena->id, 'nom' => $nom]);
+            // Une ville sans aucun quartier reçoit « Centre-ville » pour que les bailleurs puissent y publier
+            if (! $ville->quartiers()->exists()) {
+                Quartier::firstOrCreate(['ville_id' => $ville->id, 'nom' => 'Centre-ville']);
+            }
         }
     }
 }

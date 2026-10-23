@@ -1,12 +1,30 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const page = usePage();
+const url = computed(() => page.url ?? '/');
+
+const liens = computed(() => {
+    const liste = [
+        { nom: 'Accueil', href: route('accueil'), actif: url.value === '/' || url.value.startsWith('/?') },
+        { nom: 'Louer', href: route('annonces.index', { type_offre: 'location' }), actif: url.value.includes('type_offre=location') },
+        { nom: 'Acheter', href: route('annonces.index', { type_offre: 'vente' }), actif: url.value.includes('type_offre=vente') },
+    ];
+
+    if (page.props.auth.user) {
+        liste.push({ nom: 'Favoris', href: route('favoris.index'), actif: url.value.startsWith('/favoris') });
+    }
+
+    return liste;
+});
 </script>
 
 <template>
     <div class="flex min-h-screen flex-col bg-gray-50">
-        <header class="sticky top-0 z-30 border-b border-gray-200 bg-white/90 backdrop-blur">
-            <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3">
-                <Link :href="route('annonces.index')" class="flex items-center gap-2 text-lg font-bold text-brand-800">
+        <header class="sticky top-0 z-30 bg-brand-950/95 backdrop-blur">
+            <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3">
+                <Link :href="route('accueil')" class="flex items-center gap-2 text-lg font-bold text-white">
                     <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 11l9-8 9 8" />
                         <path d="M5 10v10h14V10" />
@@ -15,19 +33,34 @@ import { Link } from '@inertiajs/vue3';
                     ImmoTchad
                 </Link>
 
-                <nav class="order-3 flex w-full items-center gap-5 text-sm font-medium text-gray-700 sm:order-none sm:w-auto">
-                    <Link :href="route('annonces.index', { type_offre: 'location' })" class="hover:text-brand-700">Louer</Link>
-                    <Link :href="route('annonces.index', { type_offre: 'vente' })" class="hover:text-brand-700">Acheter</Link>
-                    <Link v-if="$page.props.auth.user" :href="route('favoris.index')" class="hover:text-brand-700">Favoris</Link>
+                <nav class="order-3 w-full overflow-x-auto sm:order-none sm:w-auto" aria-label="Navigation principale">
+                    <ul class="mx-auto flex w-max items-center gap-1 rounded-full bg-white/10 p-1 ring-1 ring-white/20">
+                        <li v-for="lien in liens" :key="lien.nom">
+                            <Link
+                                :href="lien.href"
+                                class="block rounded-full px-4 py-1.5 text-sm font-semibold transition"
+                                :class="lien.actif ? 'bg-white text-brand-900 shadow' : 'text-white/90 hover:bg-white/10'"
+                            >
+                                {{ lien.nom }}
+                            </Link>
+                        </li>
+                    </ul>
                 </nav>
 
                 <div class="flex items-center gap-3 text-sm">
-                    <Link v-if="$page.props.auth.user" :href="route('dashboard')" class="rounded-full bg-brand-600 px-4 py-1.5 font-semibold text-white hover:bg-brand-700">
+                    <Link
+                        v-if="$page.props.auth.user"
+                        :href="route('dashboard')"
+                        class="rounded-full bg-accent-500 px-5 py-2 font-bold text-brand-950 hover:bg-accent-400"
+                    >
                         Mon espace
                     </Link>
                     <template v-else>
-                        <Link :href="route('login')" class="font-medium text-gray-700 hover:text-brand-700">Connexion</Link>
-                        <Link :href="route('register')" class="rounded-full bg-brand-600 px-4 py-1.5 font-semibold text-white hover:bg-brand-700">
+                        <Link :href="route('login')" class="font-semibold text-white/90 hover:text-white">Connexion</Link>
+                        <Link
+                            :href="route('register')"
+                            class="rounded-full bg-accent-500 px-5 py-2 font-bold text-brand-950 hover:bg-accent-400"
+                        >
                             Inscription
                         </Link>
                     </template>
@@ -57,7 +90,7 @@ import { Link } from '@inertiajs/vue3';
                     <p class="text-brand-200">Publiez votre bien et touchez des locataires ou acheteurs vérifiés.</p>
                     <Link
                         :href="$page.props.auth.user ? route('bailleur.annonces.index') : route('register')"
-                        class="inline-block rounded-full bg-accent-500 px-4 py-1.5 font-semibold text-white hover:bg-accent-600"
+                        class="inline-block rounded-full bg-accent-500 px-4 py-1.5 font-semibold text-brand-950 hover:bg-accent-400"
                     >
                         Publier une annonce
                     </Link>

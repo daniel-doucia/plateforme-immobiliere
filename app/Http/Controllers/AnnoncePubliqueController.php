@@ -158,7 +158,6 @@ class AnnoncePubliqueController extends Controller
         return Ville::with(['quartiers' => fn ($q) => $q->orderBy('nom')])
             ->orderBy('nom')
             ->get()
-            ->filter(fn (Ville $v) => $v->quartiers->isNotEmpty())
             ->map(fn (Ville $v) => [
                 'id' => $v->id,
                 'nom' => $v->nom,

@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Listes déroulantes : fond noir élégant (le texte de la liste fermée reste lisible) */
+select {
+    color: #111827;
+    color-scheme: dark;
+}
+
+select option,
+select optgroup {
+    background-color: #0a0f0d;
+    color: #f4f4f5;
+}
+
+select option:checked {
+    background-color: #1b4332;
+    color: #ffffff;
+}
+
+select option:disabled {
+    color: #71717a;
+}

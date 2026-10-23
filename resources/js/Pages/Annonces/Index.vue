@@ -171,7 +171,7 @@ const pastille = (actif) =>
                     <label class="block">
                         <span class="mb-1 block text-xs font-medium text-gray-500">Quartier</span>
                         <select v-model="form.quartier_id" :class="champ" :disabled="quartiers.length === 0">
-                            <option value="">{{ quartiers.length ? 'Tous les quartiers' : "Choisir d'abord une ville" }}</option>
+                            <option value="">{{ quartiers.length ? 'Tous les quartiers' : (form.ville_id ? 'Aucun quartier' : "Choisir d'abord une ville") }}</option>
                             <option v-for="q in quartiers" :key="q.id" :value="q.id">{{ q.nom }}</option>
                         </select>
                     </label>
