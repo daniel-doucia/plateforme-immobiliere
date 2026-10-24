@@ -90,7 +90,7 @@ test('l\'administrateur voit la liste des forfaits', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Admin/Forfaits/Index')
             ->has('forfaits', 1)
-            ->has('types', 4));
+            ->has('types', 5));
 });
 
 test('l\'administrateur crée un forfait et la création est journalisée', function () {
@@ -276,7 +276,7 @@ test('la page signale les types de bien sans forfait actif', function () {
     $this->actingAs(tarifUtilisateur(Role::Admin))
         ->get(route('admin.forfaits.index'))
         ->assertInertia(fn (Assert $page) => $page
-            ->has('couverture', 4)
+            ->has('couverture', 5)
             ->where('couverture.0.actifs', 1)
             ->where('couverture.3.actifs', 0));
 });

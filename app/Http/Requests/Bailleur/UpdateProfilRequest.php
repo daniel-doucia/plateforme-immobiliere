@@ -26,7 +26,7 @@ class UpdateProfilRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nom_commercial.required_if' => 'Le nom de l\'agence est obligatoire.',
+            'nom_commercial.required_if' => 'Le nom de l\'agence ou de l\'hôtel est obligatoire.',
             'piece_identite.mimes' => 'La pièce doit être une image (JPG, PNG) ou un PDF.',
             'piece_identite.max' => 'La pièce ne doit pas dépasser 4 Mo.',
         ];

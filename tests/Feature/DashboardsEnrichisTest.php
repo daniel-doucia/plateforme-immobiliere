@@ -83,7 +83,7 @@ test('la répartition compte les annonces par type de bien, sans les annonces su
 
     $this->actingAs(tbUtilisateur(Role::Admin))->get(route('admin.dashboard'))
         ->assertInertia(fn (Assert $page) => $page
-            ->has('repartition', 4)
+            ->has('repartition', 5)
             ->where('repartition.0.type', 'chambre')
             ->where('repartition.0.total', 2)
             ->where('repartition.1.total', 0)

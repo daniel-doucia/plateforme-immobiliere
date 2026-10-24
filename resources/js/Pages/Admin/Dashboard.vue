@@ -25,6 +25,7 @@ const couleurs = {
     appartement: '#f0b429',
     maison: '#74c69d',
     terrain: '#1b4332',
+    hotel: '#e76f51',
 };
 
 const segments = computed(() =>

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatutVerification;
 use App\Enums\TypeBien;
 use App\Enums\TypeOffre;
 use App\Models\Annonce;
 use App\Models\AnnoncePhoto;
+use App\Models\BailleurProfil;
+use App\Models\Favori;
 use App\Models\Ville;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,16 +25,7 @@ class AnnoncePubliqueController extends Controller
 
         $requete = Annonce::publiees()
             ->with(['quartier.ville', 'photos'])
-            ->when($f['type_offre'] ?? null, fn ($q, $v) => $q->where('type_offre', $v))
-            ->when($f['type_bien'] ?? null, fn ($q, $v) => $q->where('type_bien', $v))
-            ->when($f['quartier_id'] ?? null, fn ($q, $v) => $q->where('quartier_id', $v))
-            ->when($f['ville_id'] ?? null, fn ($q, $v) => $q->whereHas('quartier', fn ($w) => $w->where('ville_id', $v)))
-            ->when($f['prix_min'] ?? null, fn ($q, $v) => $q->where('prix', '>=', $v))
-            ->when($f['prix_max'] ?? null, fn ($q, $v) => $q->where('prix', '<=', $v))
-            ->when($f['chambres_min'] ?? null, fn ($q, $v) => $q->where('nb_chambres', '>=', $v))
-            ->when($f['q'] ?? null, fn ($q, $v) => $q->where(
-                fn ($w) => $w->where('titre', 'like', "%{$v}%")->orWhere('description', 'like', "%{$v}%")
-            ));
+            ->filtrer($f);
 
         match ($f['tri'] ?? 'recent') {
             'prix_asc' => $requete->orderBy('prix'),
@@ -39,14 +33,27 @@ class AnnoncePubliqueController extends Controller
             default => $requete->orderByDesc('publiee_le'),
         };
 
-        $annonces = $requete
-            ->orderByDesc('id')
-            ->paginate(12)
-            ->withQueryString()
-            ->through(fn (Annonce $a) => $this->carte($a));
+        $page = $requete->orderByDesc('id')->paginate(12)->withQueryString();
+
+        $annonces = $page->getCollection();
+
+        // Bailleurs réellement vérifiés et favoris de l'utilisateur, pour les seules annonces affichées
+        $verifies = BailleurProfil::whereIn('user_id', $annonces->pluck('user_id')->unique())
+            ->where('statut_verification', StatutVerification::Verifie)
+            ->pluck('user_id')
+            ->flip();
+
+        $favoris = $request->user()
+            ? Favori::where('user_id', $request->user()->id)
+                ->whereIn('annonce_id', $annonces->pluck('id'))
+                ->pluck('annonce_id')
+                ->flip()
+            : collect();
+
+        $page->through(fn (Annonce $a) => $this->carte($a, $verifies->has($a->user_id), $favoris->has($a->id)));
 
         return Inertia::render('Annonces/Index', [
-            'annonces' => $annonces,
+            'annonces' => $page,
             'filtres' => [
                 'q' => $f['q'] ?? '',
                 'type_offre' => $f['type_offre'] ?? '',
@@ -55,7 +62,6 @@ class AnnoncePubliqueController extends Controller
                 'quartier_id' => $f['quartier_id'] ?? '',
                 'prix_min' => $f['prix_min'] ?? '',
                 'prix_max' => $f['prix_max'] ?? '',
-                'chambres_min' => $f['chambres_min'] ?? '',
                 'chambres_min' => $f['chambres_min'] ?? '',
                 'tri' => $f['tri'] ?? 'recent',
             ],
@@ -112,7 +118,7 @@ class AnnoncePubliqueController extends Controller
             'bailleur' => ['nom' => $annonce->user->name],
             'slug' => $annonce->slug,
             'est_favori' => $request->user() !== null
-                && \App\Models\Favori::where('user_id', $request->user()->id)->where('annonce_id', $annonce->id)->exists(),
+                && Favori::where('user_id', $request->user()->id)->where('annonce_id', $annonce->id)->exists(),
             'peut_voir_contact' => $peutVoirContact,
             'contact' => $contact,
         ]);
@@ -129,7 +135,6 @@ class AnnoncePubliqueController extends Controller
             'quartier_id' => ['nullable', 'integer', 'min:1'],
             'prix_min' => ['nullable', 'integer', 'min:0'],
             'prix_max' => ['nullable', 'integer', 'min:0'],
-            'chambres_min' => ['nullable', 'integer', 'min:1'],
             'chambres_min' => ['nullable', 'integer', 'between:1,20'],
             'tri' => ['nullable', 'in:recent,prix_asc,prix_desc'],
         ]);
@@ -137,22 +142,32 @@ class AnnoncePubliqueController extends Controller
         return $validateur->fails() ? [] : $validateur->validated();
     }
 
-    private function carte(Annonce $a): array
+    private function carte(Annonce $a, bool $verifie, bool $favori): array
     {
         return [
+            'id' => $a->id,
             'slug' => $a->slug,
             'titre' => $a->titre,
+            'type_code' => $a->type_bien->value,
             'type_bien' => $a->type_bien->libelle(),
             'type_offre' => $a->type_offre->libelle(),
+            'offre_code' => $a->type_offre->value,
             'prix' => $a->prix,
             'periodicite' => $a->periodicite?->libelle(),
             'lieu' => $a->quartier->nom.', '.$a->quartier->ville->nom,
+            'ville' => $a->quartier->ville->nom,
+            'quartier' => $a->quartier->nom,
             'superficie' => $a->superficie,
             'nb_chambres' => $a->nb_chambres,
+            'nb_salles_bain' => $a->nb_salles_bain,
             'photo' => $a->photos->first()?->url(),
+            'verifie' => $verifie,
+            'favori' => $favori,
+            'publiee_le' => $a->publiee_le?->toIso8601String(),
         ];
     }
 
+    /** Toutes les villes, y compris celles qui n'ont pas encore d'annonce. */
     private function villes(): array
     {
         return Ville::with(['quartiers' => fn ($q) => $q->orderBy('nom')])

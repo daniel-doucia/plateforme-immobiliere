@@ -121,7 +121,7 @@ return [
         'nb_chambres' => 'nombre de chambres',
         'nb_salles_bain' => 'nombre de salles de bain',
         'adresse_indicative' => 'adresse indicative',
-        'nom_commercial' => "nom de l'agence",
+        'nom_commercial' => "nom de l'agence ou de l'hôtel",
         'piece_identite' => "pièce d'identité",
         'motif_rejet' => 'motif du rejet',
         'forfait_id' => 'forfait',

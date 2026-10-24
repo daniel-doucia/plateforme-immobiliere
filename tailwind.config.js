@@ -30,13 +30,13 @@ export default {
                     900: '#14352a',
                     950: '#0b2218',
                 },
-                // Orange chaud : accent (ventes, appels à l'action secondaires)
+                // Orange de la maquette : accent
                 accent: {
-                    50: '#fff5ec',
-                    100: '#ffe6d0',
-                    400: '#f4a261',
-                    500: '#e9965c',
-                    600: '#d97a3c',
+                    50: '#fff5ea',
+                    100: '#fde4c8',
+                    400: '#f59a3d',
+                    500: '#e8730c',
+                    600: '#c9610a',
                 },
             },
         },

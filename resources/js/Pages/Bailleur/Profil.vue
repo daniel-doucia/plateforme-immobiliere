@@ -60,13 +60,13 @@ const submit = () => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
                         >
                             <option value="particulier">Particulier</option>
-                            <option value="agence">Agence</option>
+                            <option value="agence">Agence ou hôtel</option>
                         </select>
                         <InputError class="mt-2" :message="form.errors.type" />
                     </div>
 
                     <div v-if="form.type === 'agence'">
-                        <InputLabel for="nom_commercial" value="Nom de l'agence" />
+                        <InputLabel for="nom_commercial" value="Nom de l'agence ou de l'hôtel" />
                         <TextInput id="nom_commercial" type="text" class="mt-1 block w-full" v-model="form.nom_commercial" />
                         <InputError class="mt-2" :message="form.errors.nom_commercial" />
                     </div>

@@ -8,6 +8,7 @@ enum TypeBien: string
     case Appartement = 'appartement';
     case Maison = 'maison';
     case Terrain = 'terrain';
+    case Hotel = 'hotel';
 
     public function libelle(): string
     {
@@ -16,6 +17,7 @@ enum TypeBien: string
             self::Appartement => 'Appartement',
             self::Maison => 'Maison',
             self::Terrain => 'Terrain',
+            self::Hotel => 'Hôtel / nuitée',
         };
     }
 }

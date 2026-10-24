@@ -100,7 +100,7 @@ class Annonce extends Model
             && ($this->expire_le === null || $this->expire_le->isFuture());
     }
 
-    /** Filtres de recherche (valeurs déjà validées), partagés avec les alertes. */
+    /** Filtres de recherche (valeurs déjà validées), partagés par la recherche publique et les alertes. */
     public function scopeFiltrer(Builder $query, array $f): Builder
     {
         return $query

@@ -20,6 +20,7 @@ class StatistiquesPlateforme
         'appartement' => 'Appartements',
         'maison' => 'Maisons',
         'terrain' => 'Terrains',
+        'hotel' => 'Hôtels',
     ];
 
     /** Annonces créées par mois, du plus ancien au mois en cours. */

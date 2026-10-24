@@ -22,7 +22,7 @@ const submit = () => {
 
 const types = [
     { valeur: 'client', titre: 'Client', texte: 'Je cherche un bien' },
-    { valeur: 'bailleur', titre: 'Bailleur', texte: 'Je publie des annonces' },
+    { valeur: 'bailleur', titre: 'Bailleur', texte: 'Particulier, agence ou hôtel' },
 ];
 </script>
 

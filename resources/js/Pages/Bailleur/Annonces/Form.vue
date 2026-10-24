@@ -35,6 +35,15 @@ const form = useForm({
 
 const champsEtape1 = ['type_offre', 'type_bien', 'titre', 'description'];
 
+// Un hôtel facture à la nuit : on propose cette périodicité d'office
+watch(
+    () => form.type_bien,
+    (type) => {
+        if (type === 'hotel') form.periodicite = 'nuit';
+        else if (form.periodicite === 'nuit') form.periodicite = 'mensuel';
+    },
+);
+
 // Contrôles de confort côté navigateur : le serveur reste seul juge
 const verifier = (numero) => {
     const e = {};
