@@ -59,6 +59,7 @@ class ForfaitController extends Controller
             'types' => array_map(fn (TypeBien $t) => ['value' => $t->value, 'label' => $t->libelle()], TypeBien::cases()),
             'couverture' => $couverture,
             'historique' => $historique,
+            'max_photos' => \App\Models\Annonce::MAX_PHOTOS,
         ]);
     }
 

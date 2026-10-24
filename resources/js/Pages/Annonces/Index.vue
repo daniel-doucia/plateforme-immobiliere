@@ -182,10 +182,10 @@ const pastille = (actif) =>
 
             <!-- Barre de recherche qui chevauche le bandeau -->
             <form class="space-y-5 rounded-2xl bg-white p-4 shadow-xl ring-1 ring-black/5 sm:p-6" @submit.prevent="appliquer">
-                <div class="flex gap-2 overflow-x-auto pb-1">
+                <div class="flex flex-wrap gap-1.5 sm:gap-2">
                     <button
                         type="button"
-                        class="flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
+                        class="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-semibold transition lg:px-4 lg:py-2 lg:text-sm"
                         :class="pastille(form.type_bien === '')"
                         @click="choisirBien('')"
                     >
@@ -196,7 +196,7 @@ const pastille = (actif) =>
                         v-for="t in types_bien"
                         :key="t.value"
                         type="button"
-                        class="flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
+                        class="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-semibold transition lg:px-4 lg:py-2 lg:text-sm"
                         :class="pastille(form.type_bien === t.value)"
                         @click="choisirBien(t.value)"
                     >

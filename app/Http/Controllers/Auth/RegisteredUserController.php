@@ -40,9 +40,13 @@ class RegisteredUserController extends Controller
             $user->assignRole($role->value);
 
             if ($role === Role::Bailleur) {
+                // Sans choix explicite, le bailleur est un particulier
+                $type = TypeBailleur::tryFrom($data['role_bailleur'] ?? '') ?? TypeBailleur::Particulier;
+
                 BailleurProfil::create([
                     'user_id' => $user->id,
-                    'type' => TypeBailleur::Particulier,
+                    'type' => $type,
+                    'nom_commercial' => $type === TypeBailleur::Agence ? $data['nom_commercial'] : null,
                 ]);
             }
 
