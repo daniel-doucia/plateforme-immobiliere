@@ -14,14 +14,15 @@ const envoyer = () =>
 </script>
 
 <template>
-    <form class="mt-3 flex flex-wrap items-start gap-2" @submit.prevent="envoyer">
+    <form class="mt-3 flex flex-wrap items-start gap-2 rounded-xl bg-white p-3 ring-1 ring-gray-200" @submit.prevent="envoyer">
         <div class="min-w-[10rem] flex-1">
             <input
                 v-model="form.nom"
                 type="text"
                 placeholder="Nouveau quartier"
+                aria-label="Nom du nouveau quartier"
                 required
-                class="block w-full rounded-md border-gray-300 text-sm"
+                class="block w-full rounded-lg border-gray-300 text-sm focus:border-brand-600 focus:ring-brand-600"
             />
             <InputError class="mt-1" :message="form.errors.nom" />
         </div>
@@ -32,11 +33,12 @@ const envoyer = () =>
                 min="1"
                 max="50"
                 placeholder="Arr."
-                class="block w-20 rounded-md border-gray-300 text-sm"
+                aria-label="Arrondissement"
+                class="block w-20 rounded-lg border-gray-300 text-sm focus:border-brand-600 focus:ring-brand-600"
             />
             <InputError class="mt-1" :message="form.errors.arrondissement" />
         </div>
-        <button class="rounded-md bg-brand-600 px-3 py-2 text-sm text-white" :disabled="form.processing">
+        <button class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60" :disabled="form.processing">
             Ajouter
         </button>
     </form>

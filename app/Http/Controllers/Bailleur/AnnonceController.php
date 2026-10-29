@@ -104,6 +104,14 @@ class AnnonceController extends Controller
             $data['caution'] = null;
         }
 
+        if ($data['type_bien'] !== TypeBien::Hotel->value) {
+            $data['details_hotel'] = null;
+        } elseif (isset($data['details_hotel'])) {
+            foreach (['types_chambre', 'equipements', 'paiements'] as $cle) {
+                $data['details_hotel'][$cle] = array_values(array_unique($data['details_hotel'][$cle] ?? []));
+            }
+        }
+
         if ($data['type_bien'] === TypeBien::Terrain->value) {
             $data['nb_pieces'] = $data['nb_chambres'] = $data['nb_salles_bain'] = null;
         }
@@ -170,11 +178,17 @@ class AnnonceController extends Controller
                 'nb_chambres' => $annonce->nb_chambres,
                 'nb_salles_bain' => $annonce->nb_salles_bain,
                 'adresse_indicative' => $annonce->adresse_indicative,
+                'details_hotel' => $annonce->details_hotel,
             ] : null,
             'villes' => $villes,
             'types_bien' => $options(TypeBien::cases()),
             'types_offre' => $options(TypeOffre::cases()),
             'periodicites' => $options(Periodicite::cases()),
+            'options_hotel' => collect(config('hotel'))
+                ->map(fn (array $liste) => collect($liste)
+                    ->map(fn ($label, $cle) => ['value' => $cle, 'label' => $label])
+                    ->values())
+                ->all(),
         ]);
     }
 }
