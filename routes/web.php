@@ -25,3 +25,4 @@ require __DIR__.'/bailleur.php';
 require __DIR__.'/paiement.php';
 require __DIR__.'/public.php';
 require __DIR__.'/espace.php';
+require __DIR__.'/contact.php';
