@@ -1,4 +1,5 @@
 <script setup>
+import BoutonTheme from '@/Components/BoutonTheme.vue';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import Icone from '@/Components/Icone.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
@@ -63,6 +64,7 @@ const sections = computed(() => {
             { nom: 'Vérifications', route: 'admin.verifications.index', actif: 'admin.verifications.*', icone: 'bouclier' },
             { nom: 'Tarifs', route: 'admin.forfaits.index', actif: 'admin.forfaits.*', icone: 'etiquette' },
             { nom: 'Villes et quartiers', route: 'admin.localisation.index', actif: 'admin.localisation.*', icone: 'epingle' },
+            { nom: 'Messages', route: 'admin.messages.index', actif: 'admin.messages.*', icone: 'bouclier' },
         );
     }
 
@@ -134,6 +136,7 @@ const estActif = (lien) => [].concat(lien.actif).some((motif) => route().current
             </nav>
 
             <div class="space-y-2 border-t border-white/10 p-4">
+                <BoutonTheme variante="menu" />
                 <div class="flex items-center gap-3">
                     <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-500 text-sm font-bold text-brand-950">
                         {{ initiales }}

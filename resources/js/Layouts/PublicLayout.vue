@@ -1,4 +1,5 @@
 <script setup>
+import BoutonTheme from '@/Components/BoutonTheme.vue';
 import Icone from '@/Components/Icone.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -51,6 +52,7 @@ const liens = computed(() => [
                 </nav>
 
                 <div class="flex items-center gap-2 text-sm">
+                    <BoutonTheme />
                     <Link
                         v-if="peutPublier"
                         :href="lienPublier"
@@ -105,6 +107,8 @@ const liens = computed(() => [
                     <ul class="space-y-1">
                         <li><Link :href="route('annonces.index', { type_offre: 'location' })" class="hover:text-white">Biens à louer</Link></li>
                         <li><Link :href="route('annonces.index', { type_offre: 'vente' })" class="hover:text-white">Biens à vendre</Link></li>
+                        <li><Link :href="route('apropos')" class="hover:text-white">À propos</Link></li>
+                        <li><Link :href="route('contact.create')" class="hover:text-white">Contact</Link></li>
                     </ul>
                 </div>
                 <div class="space-y-2">
