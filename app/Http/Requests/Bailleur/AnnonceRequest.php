@@ -36,6 +36,18 @@ class AnnonceRequest extends FormRequest
             'nb_chambres' => ['nullable', 'integer', 'between:0,50'],
             'nb_salles_bain' => ['nullable', 'integer', 'between:0,50'],
             'adresse_indicative' => ['nullable', 'string', 'max:255'],
+
+            // Détails propres aux hôtels : seules les valeurs des listes officielles sont acceptées
+            'details_hotel' => ['nullable', 'array'],
+            'details_hotel.etoiles' => ['nullable', 'integer', 'between:0,5'],
+            'details_hotel.types_chambre' => ['nullable', 'array', 'max:'.count(config('hotel.types_chambre'))],
+            'details_hotel.types_chambre.*' => ['string', Rule::in(array_keys(config('hotel.types_chambre')))],
+            'details_hotel.equipements' => ['nullable', 'array', 'max:'.count(config('hotel.equipements'))],
+            'details_hotel.equipements.*' => ['string', Rule::in(array_keys(config('hotel.equipements')))],
+            'details_hotel.paiements' => ['nullable', 'array', 'max:'.count(config('hotel.paiements'))],
+            'details_hotel.paiements.*' => ['string', Rule::in(array_keys(config('hotel.paiements')))],
+            'details_hotel.arrivee' => ['nullable', 'date_format:H:i'],
+            'details_hotel.depart' => ['nullable', 'date_format:H:i'],
         ];
     }
 
@@ -47,6 +59,9 @@ class AnnonceRequest extends FormRequest
             'description.min' => 'La description doit contenir au moins 30 caractères.',
             'prix.min' => 'Indiquez un prix valide.',
             'periodicite.required_if' => 'Indiquez si le prix est par mois ou par an.',
+            'details_hotel.etoiles.between' => 'Le classement doit être compris entre 0 et 5 étoiles.',
+            'details_hotel.arrivee.date_format' => 'Indiquez l\'heure d\'arrivée au format HH:MM.',
+            'details_hotel.depart.date_format' => 'Indiquez l\'heure de départ au format HH:MM.',
         ];
     }
 }

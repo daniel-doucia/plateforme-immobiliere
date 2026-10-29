@@ -109,6 +109,7 @@ class AnnoncePubliqueController extends Controller
                 'nb_chambres' => $annonce->nb_chambres,
                 'nb_salles_bain' => $annonce->nb_salles_bain,
                 'adresse_indicative' => $annonce->adresse_indicative,
+                'hotel' => $annonce->detailsHotelPublics(),
                 'lieu' => $annonce->quartier->nom.', '.$annonce->quartier->ville->nom,
                 'publiee_le' => $annonce->publiee_le?->toIso8601String(),
             ],

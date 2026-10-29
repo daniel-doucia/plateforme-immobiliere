@@ -40,6 +40,7 @@ class Annonce extends Model
         'latitude',
         'longitude',
         'adresse_indicative',
+        'details_hotel',
     ];
 
     protected function casts(): array
@@ -56,6 +57,7 @@ class Annonce extends Model
             'publiee_le' => 'datetime',
             'expire_le' => 'datetime',
             'rappel_expiration_le' => 'datetime',
+            'details_hotel' => 'array',
         ];
     }
 
@@ -83,6 +85,30 @@ class Annonce extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(AnnoncePhoto::class)->orderBy('ordre')->orderBy('id');
+    }
+
+    /** Détails d'hôtel prêts à afficher (libellés lisibles), ou null pour un autre type de bien. */
+    public function detailsHotelPublics(): ?array
+    {
+        if ($this->type_bien !== TypeBien::Hotel || empty($this->details_hotel)) {
+            return null;
+        }
+
+        $d = $this->details_hotel;
+        $libelles = fn (string $groupe, array $cles) => collect($cles)
+            ->map(fn ($cle) => config('hotel.'.$groupe.'.'.$cle))
+            ->filter()
+            ->values()
+            ->all();
+
+        return [
+            'etoiles' => (int) ($d['etoiles'] ?? 0),
+            'types_chambre' => $libelles('types_chambre', $d['types_chambre'] ?? []),
+            'equipements' => $libelles('equipements', $d['equipements'] ?? []),
+            'paiements' => $libelles('paiements', $d['paiements'] ?? []),
+            'arrivee' => $d['arrivee'] ?? null,
+            'depart' => $d['depart'] ?? null,
+        ];
     }
 
     /** Annonces visibles par le public : publiées et non expirées. */
