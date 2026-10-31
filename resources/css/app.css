@@ -81,3 +81,25 @@ select option:disabled {
     color: #f1f5f2;
 }
 .dark ::placeholder { color: #71857a; opacity: 1; }
+
+/* Mode nuit : correctifs (fonds translucides et champs désactivés) */
+.dark .bg-white\/50,
+.dark .bg-white\/60,
+.dark .bg-white\/70,
+.dark .bg-white\/80,
+.dark .bg-white\/90 { background-color: rgba(18, 28, 23, 0.75); }
+
+.dark .bg-brand-50\/50,
+.dark .bg-brand-50\/60,
+.dark .bg-brand-50\/70 { background-color: rgba(23, 51, 37, 0.55); }
+
+.dark .disabled\:bg-gray-100:disabled { background-color: #1a2620; }
+.dark .disabled\:text-gray-400:disabled { color: #71857a; }
+.dark select:disabled,
+.dark input:disabled { background-color: #1a2620; color: #71857a; opacity: 1; }
+
+/* Mode nuit : gris translucides (cartes de réassurance de l'accueil) */
+.dark .bg-gray-100\/70 { background-color: rgba(26, 38, 32, 0.8); }
+.dark .bg-gray-100\/50,
+.dark .bg-gray-100\/60,
+.dark .bg-gray-100\/80 { background-color: rgba(26, 38, 32, 0.8); }
