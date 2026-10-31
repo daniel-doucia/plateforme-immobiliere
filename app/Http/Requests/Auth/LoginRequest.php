@@ -50,6 +50,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Bonnes identifiants, mais compte désactivé par l'administration
+        if (Auth::user()?->desactive_le !== null) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Ce compte a été désactivé. Contactez l’administration.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

@@ -61,6 +61,10 @@ const compteurs = (s) => [
                         <div>
                             <p class="font-semibold">{{ b.nom }}</p>
                             <p class="text-sm text-gray-600">{{ b.telephone }} · {{ b.email }}</p>
+                            <p class="mt-1 flex flex-wrap items-center gap-2">
+                                <span v-if="b.desactive" class="rounded-full bg-red-100 px-3 py-0.5 text-xs font-semibold text-red-800">Compte désactivé</span>
+                                <Link :href="route('admin.utilisateurs.index', { q: b.email })" class="text-xs font-medium text-brand-700 underline">Gérer le compte</Link>
+                            </p>
                         </div>
                         <span class="rounded-full px-3 py-1 text-xs font-medium" :class="verification(b.verification).classe">
                             {{ verification(b.verification).texte }}

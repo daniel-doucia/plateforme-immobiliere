@@ -61,6 +61,7 @@ const sections = computed(() => {
         administration.push(
             { nom: 'Vue d\'ensemble', route: 'admin.dashboard', actif: 'admin.dashboard', icone: 'graphique' },
             { nom: 'Bailleurs', route: 'admin.bailleurs.index', actif: 'admin.bailleurs.*', icone: 'utilisateurs' },
+            { nom: 'Utilisateurs', route: 'admin.utilisateurs.index', actif: 'admin.utilisateurs.*', icone: 'utilisateurs' },
             { nom: 'Vérifications', route: 'admin.verifications.index', actif: 'admin.verifications.*', icone: 'bouclier' },
             { nom: 'Tarifs', route: 'admin.forfaits.index', actif: 'admin.forfaits.*', icone: 'etiquette' },
             { nom: 'Villes et quartiers', route: 'admin.localisation.index', actif: 'admin.localisation.*', icone: 'epingle' },
