@@ -18,6 +18,12 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
+    /** Un compte désactivé ne peut plus se connecter. */
+    public function estDesactive(): bool
+    {
+        return $this->desactive_le !== null;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -28,6 +34,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'desactive_le' => 'datetime',
         ];
     }
 }

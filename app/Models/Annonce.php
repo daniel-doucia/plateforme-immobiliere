@@ -115,7 +115,9 @@ class Annonce extends Model
     public function scopePubliees(Builder $query): Builder
     {
         return $query->where('statut', StatutAnnonce::Publiee)
-            ->where(fn (Builder $q) => $q->whereNull('expire_le')->orWhere('expire_le', '>', now()));
+            ->where(fn (Builder $q) => $q->whereNull('expire_le')->orWhere('expire_le', '>', now()))
+            // Les annonces d'un compte désactivé sont masquées (et reviennent à sa réactivation)
+            ->whereHas('user', fn (Builder $u) => $u->whereNull('desactive_le'));
     }
 
     /** Même règle que scopePubliees, pour une annonce déjà chargée. */
@@ -123,7 +125,8 @@ class Annonce extends Model
     {
         return ! $this->trashed()
             && $this->statut === StatutAnnonce::Publiee
-            && ($this->expire_le === null || $this->expire_le->isFuture());
+            && ($this->expire_le === null || $this->expire_le->isFuture())
+            && $this->user?->desactive_le === null;
     }
 
     /** Filtres de recherche (valeurs déjà validées), partagés par la recherche publique et les alertes. */

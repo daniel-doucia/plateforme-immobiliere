@@ -39,6 +39,7 @@ class BailleurController extends Controller
             'email' => $u->email,
             'telephone' => $u->telephone,
             'verification' => $verifications->get($u->id),
+            'desactive' => $u->desactive_le !== null,
             'inscrit_le' => $u->created_at?->toIso8601String(),
             'stats' => $stats[$u->id],
         ]);
